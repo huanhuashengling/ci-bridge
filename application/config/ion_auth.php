@@ -89,6 +89,7 @@ $config['admin_group']                = 'admin';             // Default administ
 $config['school_group']               = 'school';             // Default administrators group, use name
 $config['teacher_group']              = 'teacher';             // Default administrators group, use name
 $config['student_group']              = 'student';             // Default administrators group, use name
+$config['parent_group']               = 'parent';             // Default administrators group, use name
 $config['identity']                   = 'username';             // You can use any unique column in your table as identity column. The values in this column, alongside password, will be used for login purposes
 $config['min_password_length']        = 8;                   // Minimum Required Length of Password
 $config['max_password_length']        = 20;                  // Maximum Allowed Length of Password

@@ -1,0 +1,101 @@
+/* tables */
+table.tablesorter {
+	font-family:arial;
+	background-color: #ffffff;
+	margin:10px 0pt 15px;
+	font-size: 8pt;
+	width: 100%;
+	text-align: left;
+}
+/*	background-color: #e6EEEE;
+	border: 1px solid #FFF;
+	font-size: 8pt;
+	padding: 4px;
+}*/
+table.tablesorter thead tr .header {
+/*	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+	background: #484241;
+	color: white;
+	line-height: 14px;
+	padding: 0px 15px;
+	height: 39px;
+	text-align: left;*/
+}
+table.tablesorter thead th,
+table.tablesorter tbody td {
+}
+/*table.tablesorter tbody td {
+	color: #3D3D3D;
+	padding: 4px;
+	background-color: #FFF;
+	vertical-align: top;
+}*/
+table.tablesorter tbody tr.odd td {
+	background-color: #f4f4f4;
+}
+table.system_data_table tbody tr:nth-child(even) {
+	background-color: #f4f4f4;
+}
+table.tablesorter thead tr .headerSortUp {
+	background-image: url(asc_white.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	color: white;
+}
+table.tablesorter thead tr .headerSortDown {
+	background-image: url(desc_white.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	color: white;
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+	background-color: #484241;
+}
+table.tablesorter tbody tr.static td,
+table.tablesorter thead tr.static td
+{
+	/*padding: 4px 0px 5px 21px;*/
+	background: #d7d7d7;
+	color: black;
+}
+.cell_pink{
+	background: #f5dbdf!important;
+}
+.cell_light_peach{
+	background: #f9f4e0!important;
+}
+.cell_peach{
+	background: #f9f4e0!important;
+}
+table.tablesorter tbody tr td:first-child>span>span
+{
+	/*display: none;*/
+	visibility: hidden;
+}
+table.tablesorter tbody tr td .red-icon-battery
+{
+	background: url("/images/battsystems/battery_red_icon.png") no-repeat;
+	padding: 7px 11px;
+}
+table.tablesorter tbody tr td .yellow-icon-battery
+{
+	background: url("/images/battsystems/battery_yellow_icon.png") no-repeat;
+	padding: 7px 11px;
+}
+table.tablesorter tbody tr td .green-icon-battery
+{
+	background: url("/images/battsystems/battery_green_icon.png") no-repeat;
+	padding: 7px 11px;
+}
+table.tablesorter tbody tr td .hardware-alarm-icon
+{
+	background: url("/images/battsystems/hardware_alarm_icon.png") no-repeat;
+	padding: 7px 11px;
+}
+table.tablesorter tbody tr td .replaced-battery-icon
+{
+	background: url("/images/battsystems/replaced_battery_icon.png") no-repeat;
+	padding: 7px 11px;
+}

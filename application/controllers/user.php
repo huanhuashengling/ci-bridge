@@ -1,6 +1,6 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
-
-class User extends CI_Controller {
+include_once(APPPATH . 'controllers/Generic.php');
+class User extends Generic {
 
     function __construct()
     {
@@ -55,10 +55,10 @@ class User extends CI_Controller {
 
         if ($this->form_validation->run() == true)
         {
+
             // check to see if the user is logging in
             // check for "remember me"
             $remember = (bool) $this->input->post('remember');
-
             if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
             {
                 //if the login is successful
@@ -66,17 +66,25 @@ class User extends CI_Controller {
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
 
                 $user = $this->ion_auth->user()->row();
+
                 $groups = $this->ion_auth->get_users_groups($user->id)->result();
                 $groupsName = [];
                 foreach ($groups as $key => $group) {
                     $groupsName[] = $group->name;
                 }
+
                 $redirect = "";
                 if (in_array($this->config->item('admin_group', 'ion_auth'), $groupsName)) {
+                    // $this->session->set_userdata('identity', $this->input->post('identity'));
+            $this->session->set_userdata('isSuper', TRUE);
+                    
+                    // var_dump($this->session->userdata());die();
                     $redirect = '/' . $this->config->item('admin_group', 'ion_auth');
                 } elseif (in_array($this->config->item('school_group', 'ion_auth'), $groupsName)) {
                     $redirect = '/' . $this->config->item('school_group', 'ion_auth');
                 } elseif (in_array($this->config->item('teacher_group', 'ion_auth'), $groupsName)) {
+                    var_dump($this->session->userdata());die();
+
                     $redirect = '/' . $this->config->item('teacher_group', 'ion_auth');
                 } elseif (in_array($this->config->item('student_group', 'ion_auth'), $groupsName)) {
                     $redirect = '/' . $this->config->item('student_group', 'ion_auth');
@@ -106,8 +114,12 @@ class User extends CI_Controller {
                 'id'   => 'password',
                 'type' => 'password',
             );
-
-            $this->_render_page('user/login', $this->data);
+            $obj = [
+                'body' => $this->load->view('user/login', [], true),
+                'csses' => [],
+                'jses' => [],
+            ];
+            $this->_render($obj);
         }
     }
 
@@ -833,4 +845,24 @@ class User extends CI_Controller {
         if ($returnhtml) return $view_html;//This will return html on 3rd argument being true
     }
 
+    public function about()
+    {
+        $obj = [
+            'body' => $this->load->view('/about', [], true),
+            'csses' => [],
+            'jses' => [],
+        ];
+        $this->_render($obj);
+    }
+
+    public function contact()
+    {
+        $obj = [
+            'body' => $this->load->view('contact', [], true),
+            'csses' => [],
+            'jses' => [],
+            // 'header' => $this->load->view('header', )
+        ];
+        $this->_render($obj);
+    }
 }

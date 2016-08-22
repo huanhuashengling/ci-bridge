@@ -1,11 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Admin Index</title>
-</head>
-<body>
-
-<p>Admin Index.</p>
-
-</body>
-</html>
+<div class="container">
+    <div>Admin Index.</div>
+</div>
