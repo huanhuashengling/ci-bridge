@@ -61,6 +61,7 @@ class User extends Generic {
             $remember = (bool) $this->input->post('remember');
             if ($this->ion_auth->login($this->input->post('identity'), $this->input->post('password'), $remember))
             {
+
                 //if the login is successful
                 //redirect them back to the home page
                 $this->session->set_flashdata('message', $this->ion_auth->messages());
@@ -76,14 +77,14 @@ class User extends Generic {
                 $redirect = "";
                 if (in_array($this->config->item('admin_group', 'ion_auth'), $groupsName)) {
                     // $this->session->set_userdata('identity', $this->input->post('identity'));
-            $this->session->set_userdata('isSuper', TRUE);
+            // $this->session->set_userdata('isSuper', TRUE);
                     
                     // var_dump($this->session->userdata());die();
                     $redirect = '/' . $this->config->item('admin_group', 'ion_auth');
                 } elseif (in_array($this->config->item('school_group', 'ion_auth'), $groupsName)) {
                     $redirect = '/' . $this->config->item('school_group', 'ion_auth');
                 } elseif (in_array($this->config->item('teacher_group', 'ion_auth'), $groupsName)) {
-                    var_dump($this->session->userdata());die();
+                    // var_dump($this->session->userdata());die();
 
                     $redirect = '/' . $this->config->item('teacher_group', 'ion_auth');
                 } elseif (in_array($this->config->item('student_group', 'ion_auth'), $groupsName)) {

@@ -1,10 +1,13 @@
 <?php defined('BASEPATH') OR exit('No direct script access allowed');
+
 include_once(APPPATH . 'controllers/Generic.php');
+
 class Teacher extends Generic {
 
     function __construct()
     {
         parent::__construct();
+        $this->load->model('UsersModel');
     }
 
     function index()
@@ -29,8 +32,17 @@ class Teacher extends Generic {
 
     public function courseEvaluationManagement()
     {
+        $usersId = $this->session->userdata("user_id");
+        // echo $usersId;die();
+        $teachersInfo = $this->UsersModel->getTeachersInfoByUsersId($usersId);
+        $courseName = "";
+        if (isset($teachersInfo['course_leader'])) {
+            $course = $this->UsersModel->getOneCourse($teachersInfo['course_leader']);
+            $courseName = $course['name'];
+
+        }
         $obj = [
-            'body' => $this->load->view('teacher/course_evaluation_management', [], true),
+            'body' => $this->load->view('teacher/course_evaluation_management', ['courseName' => $courseName], true),
             'csses' => [],
             'jses' => [],
         ];

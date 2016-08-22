@@ -23,7 +23,25 @@ class Generic extends CI_Controller
         }
         $this->_startSession();
         $this->load->library('UtilLibrary');
+        // $this->load->library('Session');
+        $this->init_native_session();
         
+    }
+
+    protected function init_native_session()
+    {
+        // if ( ! class_exists('Native_session'))
+        // {
+        //     require_once(APPPATH.'libraries/Native_session'.EXT);
+        // }
+
+        // // sessions engine should run on cookies to minimize opportunities
+        // // of session fixation attack
+        // ini_set('session.use_only_cookies', 1);
+
+        // $obj =& get_instance();
+        // $obj->session = new Native_session();
+        // $obj->ci_is_loaded[] = 'session';
     }
 
     protected function _render($obj)
