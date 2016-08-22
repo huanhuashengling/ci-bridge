@@ -29,9 +29,28 @@ class Teacher extends Generic {
 
     public function courseEvaluationManagement()
     {
-        var_dump($_SESSION);
         $obj = [
             'body' => $this->load->view('teacher/course_evaluation_management', [], true),
+            'csses' => [],
+            'jses' => [],
+        ];
+        $this->_render($obj);
+    }
+
+    public function classStudentInfo()
+    {
+        $obj = [
+            'body' => $this->load->view('teacher/class_student_info', [], true),
+            'csses' => [],
+            'jses' => [],
+        ];
+        $this->_render($obj);
+    }
+
+    public function classEvaluationCount()
+    {
+        $obj = [
+            'body' => $this->load->view('teacher/class_evaluation_count', [], true),
             'csses' => [],
             'jses' => [],
         ];
