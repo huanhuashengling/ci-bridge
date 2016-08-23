@@ -33,16 +33,22 @@ class Teacher extends Generic {
     public function courseEvaluationManagement()
     {
         $usersId = $this->session->userdata("user_id");
-        // echo $usersId;die();
         $teachersInfo = $this->UsersModel->getTeachersInfoByUsersId($usersId);
         $courseName = "";
+        $courseEvaluationInfo = [];
         if (isset($teachersInfo['course_leader'])) {
             $course = $this->UsersModel->getOneCourse($teachersInfo['course_leader']);
             $courseName = $course['name'];
-
+            $evaluationIndexs = $this->UsersModel->getCourseEvaluationIndexs($teachersInfo['course_leader']);
+            foreach ($evaluationIndexs as $key => $evaluationIndex) {
+                $courseEvaluationInfo[$evaluationIndex['id']] = $evaluationIndex;
+                $evaluationDetails = $this->UsersModel->getCourseEvaluationDetails($evaluationIndex['id']);
+                $courseEvaluationInfo[$evaluationIndex['id']]['details'] = $evaluationDetails;
+            }
+            // var_dump($courseEvaluationInfo);
         }
         $obj = [
-            'body' => $this->load->view('teacher/course_evaluation_management', ['courseName' => $courseName], true),
+            'body' => $this->load->view('teacher/course_evaluation_management', ['courseName' => $courseName, 'courseEvaluationInfo' => $courseEvaluationInfo], true),
             'csses' => [],
             'jses' => [],
         ];

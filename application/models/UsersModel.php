@@ -48,6 +48,34 @@ Class UsersModel extends CI_Model
         
         return false;
     }
+
+    public function getCourseEvaluationIndexs($coursesId)
+    {
+        $sql = "SELECT * FROM evaluation_indexs WHERE courses_id = ? ORDER BY order_number ASC";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $coursesId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
+    public function getCourseEvaluationDetails($indexsId)
+    {
+        $sql = "SELECT * FROM evaluation_details WHERE evaluation_indexs_id = ? ORDER BY order_number ASC";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $indexsId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
 /*
     public function getGroups()
     {
