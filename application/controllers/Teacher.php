@@ -22,10 +22,30 @@ class Teacher extends Generic {
 
     public function classroomEvaluation()
     {
+        $classes = $this->UsersModel->getClasses();
+        $classesData = [];
+        foreach ($classes as $key => $class) {
+            $classesData[$class['grade_number']][] = $class;
+        }
+
+        $classesId = $this->input->post("classesId", true);
+        $selectedStudentsData = NULL;
+        if (isset($classesId)) {
+            // $class = $this->UsersModel->getOneClasses($classesId);
+            $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
+            // var_dump($selectedStudentsData);
+            if (isset($selectedStudentsData)) {
+                return $this->load->view('teacher/classroom_evaluation', ['classesData' => $classesData, 'selectedStudentsData' => $selectedStudentsData], false);
+            }
+        }
+
+        // var_dump($classesData);die();
         $obj = [
-            'body' => $this->load->view('teacher/classroom_evaluation', [], true),
+            'body' => $this->load->view('teacher/classroom_evaluation', [
+                'classesData' => $classesData,
+                'selectedStudentsData' => $selectedStudentsData], true),
             'csses' => [],
-            'jses' => [],
+            'jses' => ['/js/pages/classroom_evaluation.js'],
         ];
         $this->_render($obj);
     }
@@ -43,7 +63,7 @@ class Teacher extends Generic {
                 'coursesId' => $this->input->post("coursesId", true),
                 'lastUpdatedBy' => $this->session->userdata("username"),
                 'lastUpdateDate' => date("Y-m-d"),
-                'orderNumber' => 5,
+                'orderNumber' => NULL,
             ];
             // echo $currentOperate;die();
             switch ($currentOperate)
@@ -59,6 +79,7 @@ class Teacher extends Generic {
                 break;
                 case "del-index":
                     $data['id'] = $this->input->post("indexId", true);
+                    $this->UsersModel->delEvaluationDetailByIndexId($data['id']);
                     $this->UsersModel->delEvaluationIndex($data);
                 break;
                 case "add-detail":

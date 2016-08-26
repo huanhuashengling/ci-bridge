@@ -142,14 +142,13 @@ Class UsersModel extends CI_Model
 
     public function editEvaluationDetail($data)
     {
-        $sql = "UPDATE evaluation_details SET description = ?, last_updated_by = ?, last_update_date = ?, evaluation_indexs_id = ?, order_number = ? WHERE id = ?";
+        $sql = "UPDATE evaluation_details SET description = ?, last_updated_by = ?, last_update_date = ?, order_number = ? WHERE id = ?";
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $data['description'], PDO::PARAM_STR);
         $stmt->bindParam(2, $data['lastUpdatedBy'], PDO::PARAM_INT);
         $stmt->bindParam(3, $data['lastUpdatedDate'], PDO::PARAM_INT);
-        $stmt->bindParam(4, $data['evaluation_indexs_id'], PDO::PARAM_INT);
-        $stmt->bindParam(5, $data['orderNumber'], PDO::PARAM_INT);
-        $stmt->bindParam(6, $data['id'], PDO::PARAM_INT);
+        $stmt->bindParam(4, $data['orderNumber'], PDO::PARAM_INT);
+        $stmt->bindParam(5, $data['id'], PDO::PARAM_INT);
         $success = $stmt->execute();
         
         return $success;
@@ -164,12 +163,21 @@ Class UsersModel extends CI_Model
         
         return $success;
     }
-/*
-    public function getGroups()
+
+    public function delEvaluationDetailByIndexId($indexId)
     {
-        $sql = "SELECT * FROM customer_types";
-        $stmt = $this->getStatement($sql);
-        // $stmt = $this->db->conn_id->prepare($sql);
+        $sql = "DELETE FROM evaluation_details WHERE evaluation_indexs_id = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $indexId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+        
+        return $success;
+    }
+
+    public function getClasses()
+    {
+        $sql = "SELECT * FROM classes";
+        $stmt = $this->db->conn_id->prepare($sql);
         $success = $stmt->execute();
 
         if ($success) {
@@ -179,12 +187,11 @@ Class UsersModel extends CI_Model
         return false;
     }
 
-    public function getOneGroup($customerTypesId)
+    public function getOneClasses($classesId)
     {
-        $sql = "SELECT * FROM customer_types where id = ?";
-        $stmt = $this->getStatement($sql);
-        // $stmt = $this->db->conn_id->prepare($sql);
-        $stmt->bindParam(1, $customerTypesId, PDO::PARAM_INT);
+        $sql = "SELECT * FROM classes WHERE id=?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $classesId, PDO::PARAM_INT);
         $success = $stmt->execute();
 
         if ($success) {
@@ -193,12 +200,15 @@ Class UsersModel extends CI_Model
         
         return false;
     }
-
-    public function addGroup()
+    
+    public function getClassStudentsByClassesId($classesId)
     {
-        $sql = "SELECT * FROM customer_types";
-        $stmt = $this->getStatement($sql);
-        // $stmt = $this->db->conn_id->prepare($sql);
+        $sql = "SELECT u.*, s.* FROM users as u 
+                LEFT JOIN students as s ON u.id = s.users_id
+                WHERE 1
+                AND s.classes_id = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $classesId, PDO::PARAM_INT);
         $success = $stmt->execute();
 
         if ($success) {
@@ -208,11 +218,16 @@ Class UsersModel extends CI_Model
         return false;
     }
 
-    public function updateGroup()
+    public function getClassStudents($data)
     {
-        $sql = "SELECT * FROM customer_types";
-        $stmt = $this->getStatement($sql);
-        // $stmt = $this->db->conn_id->prepare($sql);
+        $sql = "SELECT u.*, s.* FROM users as u 
+                LEFT JOIN students as s ON u.id = s.users_id
+                WHERE 1
+                AND grade_number = ?
+                AND class_number = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $data['grade_number'], PDO::PARAM_INT);
+        $stmt->bindParam(2, $data['class_number'], PDO::PARAM_INT);
         $success = $stmt->execute();
 
         if ($success) {
@@ -221,22 +236,5 @@ Class UsersModel extends CI_Model
         
         return false;
     }
-
-    public function getOneGroup($customerTypesId)
-    {
-        $sql = "SELECT * FROM customer_types where id = ?";
-        $stmt = $this->getStatement($sql);
-        // $stmt = $this->db->conn_id->prepare($sql);
-        $stmt->bindParam(1, $customerTypesId, PDO::PARAM_INT);
-        $success = $stmt->execute();
-
-        if ($success) {
-            return $stmt->fetch();
-        }
-        
-        return false;
-    }
-*/
-
 
 }

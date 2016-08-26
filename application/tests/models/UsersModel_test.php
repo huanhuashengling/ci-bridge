@@ -96,5 +96,15 @@ namespace {
         //     $expected = false;
         //     $this->assertEquals($expected, $actual, $test); 
         // }
+        // 
+        public function testGetClassStudentsByClassesId()
+        {
+            $test = "Test success get class students";
+            $classesId = 2;
+            $actual = $this->obj->getClassStudentsByClassesId($classesId);
+            var_dump($actual);die();
+            $expected = true;
+            $this->assertEquals($expected, $actual, $test); 
+        }
     }
 }
