@@ -15,7 +15,8 @@
         <ul class="nav navbar-nav">
             <li class="<?php echo ($activeLink == 'classroom-evaluation') ? 'active' : ''; ?>"><a href="/teacher/classroom-evaluation">课堂评价</a></li>
             <li class="<?php echo ($activeLink == 'course-evaluation-management') ? 'active' : ''; ?>"><a href="/teacher/course-evaluation-management">学科评价设计</a></li>
-            <li class="<?php echo ($activeLink == 'class-student-info') ? 'active' : ''; ?>"><a href="/teacher/class-student-info">班级学生信息</a></li>
+            <!-- <li class="<?php echo ($activeLink == 'class-student-info') ? 'active' : ''; ?>"><a href="/teacher/class-student-info">班级学生信息</a></li> -->
+            <li class="<?php echo ($activeLink == 'students-data-management') ? 'active' : ''; ?>"><a href="/teacher/students-data-management">学生信息管理</a></li>
             <li class="<?php echo ($activeLink == 'class-evaluation-count') ? 'active' : ''; ?>"><a href="/teacher/class-evaluation-count">班级评价统计</a></li>
             <li class="<?php echo ($activeLink == 'school-evaluation-count') ? 'active' : ''; ?>"><a href="/school/school-evaluation-count">学校评价统计</a></li>
             <li class="<?php echo ($activeLink == 'grade-evaluation-count') ? 'active' : ''; ?>"><a href="/school/grade-evaluation-count">年级评价统计</a></li>

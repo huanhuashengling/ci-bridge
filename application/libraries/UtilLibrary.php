@@ -423,4 +423,10 @@ class UtilLibrary {
         }
         return implode('_', $ret);
     }
+
+    public function getCsvData($file)
+    {
+        $csv = file_get_contents($file['tmp_name']);
+        $rowList = array_map("str_getcsv", explode("\r", $csv));
+    }
 }

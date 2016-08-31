@@ -20,15 +20,53 @@
         <?php
             if (isset($selectedStudentsData)) {
 
-                echo "<table class='table table-striped table-hover table-condensed'>";
-
+                echo "<table class='table table-striped table-hover table-condensed'><tr>";
+                $maxNumPerLine = 4;
+                $num = 0;
                 foreach ($selectedStudentsData as $key => $student) {
-                    echo "<tr>";
-                        echo "<td><button class='btn btn-info btn-lg class-btn' id='" . $student['id'] . "'>" . $student['username'] . "</button></td>";
-                    echo "</tr>";
+                  if ($num < $maxNumPerLine) {
+                    $num++;
+                    echo "<td><button class='btn btn-info class-btn' id='" . $student['id'] . "'>" . $student['username'] . "</button></td>";
+                  } else {
+                    $num = 0;
+                    echo "<td><button class='btn btn-info class-btn' id='" . $student['id'] . "'>" . $student['username'] . "</button></td></tr><tr>";
+                  }
+                        
                 }
-                echo "</table>";
+                echo "</tr></table>";
             }
+        ?>
+    </div>
+
+    <div id="comment-selection">
+        <h4>请选择评价信息</h4>
+        <?php
+          if (isset($courses)) {
+            $courseHtml = "";
+            $evaluationIndexHtml = "";
+            $evaluationDetailHtml = "";
+            foreach ($courses as $key => $course) {
+              $courseHtml = $courseHtml . "<button class='btn btn-info class-btn' id='" . $course['id'] . "'>" . $course['name'] . "</button>";
+
+              foreach ($evaluationIndexData[$course['id']] as $key => $evaluationIndex) {
+                $evaluationIndexHtml = $evaluationIndexHtml . "<button class='btn btn-info class-btn' id='" . $evaluationIndex['id'] . "'>" . $evaluationIndex['description'] . "</button>";
+
+                foreach ($evaluationDetailData[$evaluationIndex['id']] as $key => $evaluationDetail) {
+                  $evaluationDetailHtml = $evaluationDetailHtml . "<button class='btn btn-info class-btn' id='" . $evaluationDetail['id'] . "'>" . $evaluationDetail['description'] . "</button>";
+                  
+                }
+              }
+
+            }
+
+            echo "课程： " . $courseHtml;
+            echo "评价指标： " . $evaluationIndexHtml;
+            echo "评价细则：" . $evaluationDetailHtml;
+            var_dump($courses);
+            var_dump($evaluationIndexData);
+            var_dump($evaluationDetailData);
+          }
+            
         ?>
     </div>
 

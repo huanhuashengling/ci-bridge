@@ -237,4 +237,41 @@ Class UsersModel extends CI_Model
         return false;
     }
 
+    public function addStudentAddtionalData($data)
+    {
+        $sql = "INSERT INTO students (users_id, edu_starting_year, city_student_number, national_student_number, gender, birth_date, classes_id) values (?,?,?,?,?,?,?)";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $data['usersId'], PDO::PARAM_INT);
+        $stmt->bindParam(2, $data['eduStartingYear'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $data['cityStudentNumber'], PDO::PARAM_STR);
+        $stmt->bindParam(4, $data['nationalStudentNumber'], PDO::PARAM_STR);
+        $stmt->bindParam(5, $data['gender'], PDO::PARAM_INT);
+        $stmt->bindParam(6, $data['birthDate'], PDO::PARAM_STR);
+        $stmt->bindParam(7, $data['classesId'], PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            $itemId = $this->db->insert_id();
+            return $itemId;
+        }
+        
+        return false;
+    }
+
+    public function getCoursesByTeachersId($teachersId)
+    {
+        $sql = "SELECT c.* FROM courses_teachers as ct 
+                LEFT JOIN courses as c ON c.id = ct.courses_id
+                WHERE teachers_users_id = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $teachersId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
 }

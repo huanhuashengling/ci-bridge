@@ -19,21 +19,38 @@ namespace {
             $this->obj = $this->CI->UsersModel;
         }
 
-        /**
-         * @group testAddressType
-         * @group testAddress
-         */
-        public function testAddEvaluationIndex()
+        // public function testAddEvaluationIndex()
+        // {
+        //     $test = "Test success add evaluation index.";
+        //     $data = [
+        //         'coursesId' => 1,
+        //         'description' => "evaluation index",
+        //         'lastUpdatedBy' => 'wenjie',
+        //         'lastUpdateDate' => date("Y-m-d"),
+        //         'orderNumber' => 5,
+        //     ];
+        //     $evaluationIndexsId = $this->obj->addEvaluationIndex($data);
+        //     $actual = (boolean)$evaluationIndexsId;
+        //     $expected = true;
+        //     $this->assertEquals($expected, $actual, $test);
+
+        //     return $evaluationIndexsId;
+        // }
+
+        public function testAddStudentAddtionalData()
         {
-            $test = "Test success add evaluation index.";
+            $test = "Test success add student addtional data.";
             $data = [
-                'coursesId' => 1,
-                'description' => "evaluation index",
-                'lastUpdatedBy' => 'wenjie',
-                'lastUpdateDate' => date("Y-m-d"),
-                'orderNumber' => 5,
+                'usersId' => 6,
+                'eduStartingYear' => "2010",
+                'cityStudentNumber' => '430181198410264376',
+                'nationalStudentNumber' => '430181198410264376',
+                'gender' => 1,
+                'birthDate' => '2010-02-03',
+                'classesId' => 1,
             ];
-            $evaluationIndexsId = $this->obj->addEvaluationIndex($data);
+            $evaluationIndexsId = $this->obj->addStudentAddtionalData($data);
+            echo $evaluationIndexsId;die();
             $actual = (boolean)$evaluationIndexsId;
             $expected = true;
             $this->assertEquals($expected, $actual, $test);

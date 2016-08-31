@@ -8,6 +8,7 @@ class Teacher extends Generic {
     {
         parent::__construct();
         $this->load->model('UsersModel');
+        $this->load->library('Ion_auth');
     }
 
     function index()
@@ -22,6 +23,27 @@ class Teacher extends Generic {
 
     public function classroomEvaluation()
     {
+        $usersId = $this->session->userdata("user_id");
+        if (!isset($usersId)) {
+            redirect('/user/login','refresh');
+        }
+        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        $evaluationIndexData = [];
+        $evaluationDetailData = [];
+        foreach ($courses as $key => $course) {
+            $evaluationIndexInfo = $this->UsersModel->getCourseEvaluationIndexs($course['id']);
+            $evaluationIndexData[$course['id']] = $evaluationIndexInfo;
+
+            foreach ($evaluationIndexInfo as $key => $evaluationIndex) {
+                $evaluationDetailInfo = $this->UsersModel->getCourseEvaluationDetails($evaluationIndex['id']);
+                $evaluationDetailData[$evaluationIndex['id']] = $evaluationDetailInfo;
+            }
+
+        }
+        // var_dump($evaluationIndexData);
+        // var_dump($evaluationDetailData);
+
+
         $classes = $this->UsersModel->getClasses();
         $classesData = [];
         foreach ($classes as $key => $class) {
@@ -35,7 +57,15 @@ class Teacher extends Generic {
             $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
             // var_dump($selectedStudentsData);
             if (isset($selectedStudentsData)) {
-                return $this->load->view('teacher/classroom_evaluation', ['classesData' => $classesData, 'selectedStudentsData' => $selectedStudentsData], false);
+        // var_dump($courses);
+                
+                return $this->load->view('teacher/classroom_evaluation', 
+                                        ['classesData' => $classesData, 
+                                        'selectedStudentsData' => $selectedStudentsData,
+                                        'courses' => $courses,
+                                        'evaluationIndexData' => $evaluationIndexData,
+                                        'evaluationDetailData' => $evaluationDetailData
+                                        ], false);
             }
         }
 
@@ -142,8 +172,57 @@ class Teacher extends Generic {
         $this->_render($obj);
     }
 
+    public function studentsDataManagement()
+    {
+        $usersId = $this->session->userdata("user_id");
+        if (!isset($usersId)) {
+            redirect('/user/login','refresh');
+        }
+
+        if (array_key_exists('csvfile', $_FILES)) {
+            $file = $_FILES['csvfile'];
+        
+            if ($file['size'] > 0) {
+                if ($file['type'] === 'text/csv') {
+
+                    $csv = file_get_contents($file['tmp_name']);
+                    $rowList = array_map("str_getcsv", explode("\r", $csv));
+
+                    $validNames= ['username', 'password', 'firstName', 'classesId', 'eduStartingYear', 'cityStudentNumber', 'nationalStudentNumber', 'gender', 'birthDate'];
+
+                    $fileHeader = array_shift($rowList);
+                    
+                    $difference = array_diff($validNames, $fileHeader);
+                    if ($difference) {
+                        // var_dump($difference);die("ss");
+                        // $output['error'] = 'File header is not correct! Please check these labels in first line of file: ' . implode(",", $difference);
+                    } else {
+                        foreach ($rowList as $key => $row) {
+                            $studentData = array_combine($validNames, $row);
+
+                            $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
+                            $studentData['usersId'] = $studentsId;
+                            $evaluationDetails = $this->UsersModel->addStudentAddtionalData($studentData);
+                        }
+                    }
+                } else {
+                    // $output['error'] = 'File format is not correct!';
+                }
+            }
+        }
+
+        
+        $obj = [
+            'body' => $this->load->view('teacher/students-data-management', [], true),
+            'csses' => [],
+            'jses' => [],
+        ];
+        $this->_render($obj);
+    }
+
     public function classEvaluationCount()
     {
+
         $obj = [
             'body' => $this->load->view('teacher/class_evaluation_count', [], true),
             'csses' => [],
