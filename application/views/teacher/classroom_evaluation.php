@@ -1,35 +1,22 @@
 <div class="container" id="classroom-evaluation">
-    <div id="classes-selection" class="">
-        <h4>请选择评价的班级</h4>
-        <?php
-            echo "<table class='table table-striped table-hover table-condensed'>";
-
-            foreach ($classesData as $key => $gradeClasses) {
-                echo "<tr>";
-                foreach ($gradeClasses as $key => $class) {
-                    echo "<td><button class='btn btn-info btn-lg class-btn' value='" . $class['id'] . "'>" . $class['name'] . "</button></td>";
-                }
-                echo "</tr>";
-            }
-            echo "</table>";
-        ?>
-    </div>
-
-    <div id="students-selection" class='hidden'>
+    <div><a class="btn btn-primary" href="/teacher/classes-selection">返回班级选择</a></div>
+    <div id="students-selection">
         <h4>请选择评价的学生</h4>
         <?php
             if (isset($selectedStudentsData)) {
-
+                // var_dump($selectedStudentsData);
                 echo "<table class='table table-striped table-hover table-condensed'><tr>";
                 $maxNumPerLine = 4;
                 $num = 0;
                 foreach ($selectedStudentsData as $key => $student) {
+                  $btnClass = (0 == $student['gender'])?"btn-danger":"btn-primary";
+                  $gender = (0 == $student['gender'])?"gender='girl'":"gender='boy'";
                   if ($num < $maxNumPerLine) {
                     $num++;
-                    echo "<td><button class='btn btn-info class-btn' id='" . $student['id'] . "'>" . $student['username'] . "</button></td>";
+                    echo "<td><button class='btn " . $btnClass . " student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td>";
                   } else {
                     $num = 0;
-                    echo "<td><button class='btn btn-info class-btn' id='" . $student['id'] . "'>" . $student['username'] . "</button></td></tr><tr>";
+                    echo "<td><button class='btn " . $btnClass . " student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td></tr><tr>";
                   }
                         
                 }
@@ -42,29 +29,35 @@
         <h4>请选择评价信息</h4>
         <?php
           if (isset($courses)) {
-            $courseHtml = "";
-            $evaluationIndexHtml = "";
-            $evaluationDetailHtml = "";
+            $courseActive = "active";
+            $evaluationIndexActive = "active";
+            $evaluationDetailActive = "active";
+            $courseHtml = "<div class='btn-group' name='course-btn-group' data-toggle='buttons'>";
+            $evaluationIndexHtml = "<div class='btn-group' name='evaluation-index-btn-group' data-toggle='buttons'>";
+            $evaluationDetailHtml = "<div class='btn-group' name='evaluation-detail-btn-group' data-toggle='buttons'>";
             foreach ($courses as $key => $course) {
-              $courseHtml = $courseHtml . "<button class='btn btn-info class-btn' id='" . $course['id'] . "'>" . $course['name'] . "</button>";
-
+              $courseHtml = $courseHtml . "<label class='btn btn-default " .$courseActive. "'><input type='radio' id='" . $course['id'] . "'>" . $course['name'] . "</label>";
+              $courseActive = "";
               foreach ($evaluationIndexData[$course['id']] as $key => $evaluationIndex) {
-                $evaluationIndexHtml = $evaluationIndexHtml . "<button class='btn btn-info class-btn' id='" . $evaluationIndex['id'] . "'>" . $evaluationIndex['description'] . "</button>";
-
+                $evaluationIndexHtml = $evaluationIndexHtml . "<label class='btn btn-default " .$evaluationIndexActive. "''><input type='radio' id='" . $evaluationIndex['id'] . "'>" . $evaluationIndex['description'] . "</label>";
+                $evaluationIndexActive = "";
                 foreach ($evaluationDetailData[$evaluationIndex['id']] as $key => $evaluationDetail) {
-                  $evaluationDetailHtml = $evaluationDetailHtml . "<button class='btn btn-info class-btn' id='" . $evaluationDetail['id'] . "'>" . $evaluationDetail['description'] . "</button>";
-                  
+                  $evaluationDetailHtml = $evaluationDetailHtml . "<label class='btn btn-default " .$evaluationDetailActive. "'><input type='radio' id='" . $evaluationDetail['id'] . "'>" . $evaluationDetail['description'] . "</label>";
+                  $evaluationDetailActive = "";
                 }
               }
-
             }
+            $evaluationLevel = "<div class='btn-group' name='level-btn-group' data-toggle='buttons'>
+            <label class='btn btn-default active'><input type='radio' id='1'>优</label>
+            <label class='btn btn-default'><input type='radio' id='2'>良</label>
+            <label class='btn btn-default'><input type='radio' id='3'>差</label>
+                              </div>";
 
-            echo "课程： " . $courseHtml;
-            echo "评价指标： " . $evaluationIndexHtml;
-            echo "评价细则：" . $evaluationDetailHtml;
-            var_dump($courses);
-            var_dump($evaluationIndexData);
-            var_dump($evaluationDetailData);
+            echo "<div>课程： " . $courseHtml . "</div></div>";
+            echo "<div>评价指标： " . $evaluationIndexHtml . "</div>";
+            echo "<div>评价细则：" . $evaluationDetailHtml . "</div>";
+            echo "<div>评价等第：" . $evaluationLevel . "</div>";
+            echo "<button id='submit-comment' class='btn btn-primary'>提交评价</button>";
           }
             
         ?>

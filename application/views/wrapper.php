@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="/css/carousel.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
     <link rel="stylesheet" href="/css/jquery-ui.css">
-    <link rel="stylesheet" href="/css/flatit.css">
+    <!-- <link rel="stylesheet" href="/css/flatit.css"> -->
+    
     <!-- <link rel="stylesheet" href="/js/libraries/tablesorter/css/style_system_data.css"> -->
     <!-- <link rel="stylesheet" href="/js/libraries/jqwidgets/styles/jqx.base.css" type="text/css" /> -->
     <?php

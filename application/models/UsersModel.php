@@ -274,4 +274,25 @@ Class UsersModel extends CI_Model
         return false;
     }
 
+    public function submitEvaluation($data)
+    {
+        $sql = "INSERT INTO evaluation (evaluate_date, courses_id, evaluation_indexs_id, evaluation_details_id, scores_id, teachers_users_id, students_users_id) values (?,?,?,?,?,?,?)";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $data['evaluateDate'], PDO::PARAM_STR);
+        $stmt->bindParam(2, $data['coursesId'], PDO::PARAM_INT);
+        $stmt->bindParam(3, $data['evaluationIndexsId'], PDO::PARAM_INT);
+        $stmt->bindParam(4, $data['evaluationDetailsId'], PDO::PARAM_INT);
+        $stmt->bindParam(5, $data['scoresId'], PDO::PARAM_INT);
+        $stmt->bindParam(6, $data['teachersUsersId'], PDO::PARAM_INT);
+        $stmt->bindParam(7, $data['studentsUsersId'], PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            $itemId = $this->db->insert_id();
+            return $itemId;
+        }
+        
+        return false;
+    }
+
 }

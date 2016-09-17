@@ -21,9 +21,36 @@ class Teacher extends Generic {
         $this->_render($obj);
     }
 
+    public function classesSelection()
+    {
+        $this->session->unset_userdata('classesId');
+
+        $post = $this->input->post();
+        
+        if (array_key_exists('classesId', $post)) {
+            $classesId = $post['classesId'];
+            $this->session->set_userdata('classesId', $classesId);
+            return true;
+        }
+        $classes = $this->UsersModel->getClasses();
+        $classesData = [];
+        foreach ($classes as $key => $class) {
+            $classesData[$class['grade_number']][] = $class;
+        }
+
+        $obj = [
+            'body' => $this->load->view('teacher/classes_selection', [
+                'classesData' => $classesData], true),
+            'csses' => [],
+            'jses' => ['/js/pages/classes-selection.js'],
+        ];
+        $this->_render($obj);
+    }
+
     public function classroomEvaluation()
     {
         $usersId = $this->session->userdata("user_id");
+        $classesId = $this->session->userdata("classesId");
         if (!isset($usersId)) {
             redirect('/user/login','refresh');
         }
@@ -38,46 +65,49 @@ class Teacher extends Generic {
                 $evaluationDetailInfo = $this->UsersModel->getCourseEvaluationDetails($evaluationIndex['id']);
                 $evaluationDetailData[$evaluationIndex['id']] = $evaluationDetailInfo;
             }
-
         }
-        // var_dump($evaluationIndexData);
-        // var_dump($evaluationDetailData);
+        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
 
-
-        $classes = $this->UsersModel->getClasses();
-        $classesData = [];
-        foreach ($classes as $key => $class) {
-            $classesData[$class['grade_number']][] = $class;
-        }
-
-        $classesId = $this->input->post("classesId", true);
-        $selectedStudentsData = NULL;
-        if (isset($classesId)) {
-            // $class = $this->UsersModel->getOneClasses($classesId);
-            $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
-            // var_dump($selectedStudentsData);
-            if (isset($selectedStudentsData)) {
-        // var_dump($courses);
-                
-                return $this->load->view('teacher/classroom_evaluation', 
-                                        ['classesData' => $classesData, 
+        $obj = [
+            'body' => $this->load->view('teacher/classroom_evaluation', [
                                         'selectedStudentsData' => $selectedStudentsData,
                                         'courses' => $courses,
                                         'evaluationIndexData' => $evaluationIndexData,
-                                        'evaluationDetailData' => $evaluationDetailData
-                                        ], false);
+                                        'evaluationDetailData' => $evaluationDetailData], true),
+            'csses' => [],
+            'jses' => ['/js/pages/classroom-evaluation.js'],
+        ];
+        $this->_render($obj);
+    }
+
+    public function submitEvaluation()
+    {   
+        $response = "true";
+        $post = $this->input->post();
+        $usersId = $this->session->userdata("user_id");
+        $classesId = $this->session->userdata("classesId");
+        $studentsIds = $post['studentsIds'];
+        $coursesId = $post['coursesId'];
+        $evaluationIndexsId = $post['evaluationIndexsId'];
+        $evaluationDetailsId = $post['evaluationDetailsId'];
+        $evaluationLevel = $post['evaluationLevel'];
+        $evaluationData = [
+                'evaluateDate' => '2016-12-12',
+                'coursesId' => $coursesId,
+                'evaluationIndexsId' => $evaluationIndexsId,
+                'evaluationDetailsId' => $evaluationDetailsId,
+                'scoresId' => $evaluationLevel,
+                'teachersUsersId' => $usersId,
+            ];
+        foreach ($studentsIds as $studentsId) {
+            $evaluationData['studentsUsersId'] = $studentsId;
+            $newEvaluationId = $this->UsersModel->submitEvaluation($evaluationData);
+            if (!$newEvaluationId) {
+                $response = "false";
             }
         }
 
-        // var_dump($classesData);die();
-        $obj = [
-            'body' => $this->load->view('teacher/classroom_evaluation', [
-                'classesData' => $classesData,
-                'selectedStudentsData' => $selectedStudentsData], true),
-            'csses' => [],
-            'jses' => ['/js/pages/classroom_evaluation.js'],
-        ];
-        $this->_render($obj);
+        echo $response;
     }
 
     public function courseEvaluationManagement()
@@ -137,7 +167,7 @@ class Teacher extends Generic {
             'body' => $this->load->view('teacher/course_evaluation_management', 
                 $data, true),
             'csses' => [],
-            'jses' => ['/js/pages/course_evaluation_management.js'],
+            'jses' => ['/js/pages/course-evaluation-management.js'],
         ];
         $this->_render($obj);
     }
