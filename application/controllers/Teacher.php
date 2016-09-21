@@ -57,23 +57,26 @@ class Teacher extends Generic {
         $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
         $evaluationIndexData = [];
         $evaluationDetailData = [];
-        foreach ($courses as $key => $course) {
-            $evaluationIndexInfo = $this->UsersModel->getCourseEvaluationIndexs($course['id']);
-            $evaluationIndexData[$course['id']] = $evaluationIndexInfo;
+        
+        $defaultCoursesId = $courses[0]['id'];
+        $evaluationIndexInfo = $this->UsersModel->getCourseEvaluationIndexs($defaultCoursesId);
+        $evaluationIndexHtml = $this->getEvaluationIndexHtml($defaultCoursesId);
 
-            foreach ($evaluationIndexInfo as $key => $evaluationIndex) {
-                $evaluationDetailInfo = $this->UsersModel->getCourseEvaluationDetails($evaluationIndex['id']);
-                $evaluationDetailData[$evaluationIndex['id']] = $evaluationDetailInfo;
-            }
-        }
+        $defaultEvaluationIndexsId = $evaluationIndexInfo[0]['id'];
+        $evaluationDetailInfo = $this->UsersModel->getCourseEvaluationDetails($defaultEvaluationIndexsId);
+        $evaluationDetailHtml = $this->getEvaluationDetailHtml($defaultEvaluationIndexsId);
+
         $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
 
         $obj = [
             'body' => $this->load->view('teacher/classroom_evaluation', [
                                         'selectedStudentsData' => $selectedStudentsData,
                                         'courses' => $courses,
-                                        'evaluationIndexData' => $evaluationIndexData,
-                                        'evaluationDetailData' => $evaluationDetailData], true),
+                                        'defaultCoursesId' => $defaultCoursesId,
+                                        'evaluationIndexInfo' => $evaluationIndexInfo,
+                                        'evaluationIndexHtml' => $evaluationIndexHtml,
+                                        'evaluationDetailHtml' => $evaluationDetailHtml,
+                                        'evaluationDetailInfo' => $evaluationDetailInfo], true),
             'csses' => [],
             'jses' => ['/js/pages/classroom-evaluation.js'],
         ];
@@ -259,5 +262,58 @@ class Teacher extends Generic {
             'jses' => [],
         ];
         $this->_render($obj);
+    }
+
+    public function ajaxGetCourseEvaluateContent()
+    {
+        $post = $this->input->post();
+        $coursesId = $post['coursesId'];
+
+        $evaluationIndexHtml = $this->getEvaluationIndexHtml($coursesId);
+
+        $evaluationIndexInfo = $this->UsersModel->getCourseEvaluationIndexs($coursesId);
+        $evaluationIndexsId = $evaluationIndexInfo[0]['id'];
+        $evaluationDetailHtml = $this->getEvaluationDetailHtml($evaluationIndexsId);
+
+        $response = ['evaluationIndexHtmlContent' => $evaluationIndexHtml, 'evaluationDetailHtmlContent' => $evaluationDetailHtml];
+
+        echo json_encode($response);
+    }
+
+    public function ajaxGetIndexEvaluateContent()
+    {
+        $post = $this->input->post();
+        $evaluationIndexsId = $post['evaluationIndexsId'];
+
+        $evaluationDetailHtml = $this->getEvaluationDetailHtml($evaluationIndexsId);
+        echo $evaluationDetailHtml;
+    }
+
+    public function getEvaluationIndexHtml($coursesId)
+    {
+        $evaluationIndexInfo = $this->UsersModel->getCourseEvaluationIndexs($coursesId);
+        $evaluationIndexHtml = "<div class='btn-group' id='evaluation-index-btn-group' name='evaluation-index-btn-group' data-toggle='buttons'>";
+        $evaluationIndexActive = "active";
+        foreach ($evaluationIndexInfo as $key => $evaluationIndex) {
+          $evaluationIndexHtml = $evaluationIndexHtml . "<label class='btn btn-default " .$evaluationIndexActive. "''><input type='radio' id='" . $evaluationIndex['id'] . "'>" . $evaluationIndex['description'] . "</label>";
+          $evaluationIndexActive = "";
+        }
+        $evaluationIndexHtml = $evaluationIndexHtml . "</div>";
+
+        return $evaluationIndexHtml;
+    }
+
+    public function getEvaluationDetailHtml($evaluationIndexsId)
+    {
+        $evaluationDetailInfo = $this->UsersModel->getCourseEvaluationDetails($evaluationIndexsId);
+        $evaluationDetailHtml = "<div class='btn-group' id='evaluation-detail-btn-group' name='evaluation-detail-btn-group' data-toggle='buttons'>";
+        $evaluationDetailActive = "active";
+        foreach ($evaluationDetailInfo as $key => $evaluationDetail) {
+          $evaluationDetailHtml = $evaluationDetailHtml . "<label class='btn btn-default " .$evaluationDetailActive. "'><input type='radio' id='" . $evaluationDetail['id'] . "'>" . $evaluationDetail['description'] . "</label>";
+          $evaluationDetailActive = "";
+        }
+        $evaluationDetailHtml = $evaluationDetailHtml . "</div>";
+
+        return $evaluationDetailHtml;
     }
 }

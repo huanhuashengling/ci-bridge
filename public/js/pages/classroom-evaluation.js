@@ -21,13 +21,37 @@ $(document).ready(function() {
 		}
 	});
 
-	$("div[name='course-btn-group'] label").click(function(e){
-		// console.log($(this).children().attr('id'));
-	});
-
-	$("div[name='evaluation-index-btn-group'] label").click(function(e){
-		// console.log($(this).children().attr('id'));
-	});
+	$(document)
+        .on('click', "div[name='course-btn-group'] label", function() {
+        	var coursesId =$(this).children().attr('id'); 
+			var data = {
+					coursesId : coursesId,
+				};
+			$.ajax({
+					type: 'POST',
+					data: data,
+					url: "/teacher/ajax-get-course-evaluate-content",
+					success: function(data) {
+						var response = JSON.parse(data);
+						$("#evaluation-index-btn-group").html(response.evaluationIndexHtmlContent)
+						$("#evaluation-detail-btn-group").html(response.evaluationDetailHtmlContent)
+					}
+				});
+        })
+        .on('click', "div[name='evaluation-index-btn-group'] label", function() {
+			var evaluationIndexsId =$(this).children().attr('id'); 
+			var data = {
+					evaluationIndexsId : evaluationIndexsId,
+				};
+			$.ajax({
+					type: 'POST',
+					data: data,
+					url: "/teacher/ajax-get-index-evaluate-content",
+					success: function(data) {
+						$("#evaluation-detail-btn-group").html(data)
+					}
+				});
+        });
 
 	$('#submit-comment').click(function(e) {
 		var studentsIds = $.map($('.btn-success'), function(element) {
