@@ -82,11 +82,11 @@ class User extends Generic {
                     // var_dump($this->session->userdata());die();
                     $redirect = '/' . $this->config->item('admin_group', 'ion_auth');
                 } elseif (in_array($this->config->item('school_group', 'ion_auth'), $groupsName)) {
-                    $redirect = '/' . $this->config->item('school_group', 'ion_auth');
+                    $redirect = '/' . $this->config->item('school_group', 'ion_auth'). "/students-data-management";
                 } elseif (in_array($this->config->item('teacher_group', 'ion_auth'), $groupsName)) {
                     // var_dump($this->session->userdata());die();
 
-                    $redirect = '/' . $this->config->item('teacher_group', 'ion_auth');
+                    $redirect = '/' . $this->config->item('teacher_group', 'ion_auth') . "/classroom-evaluation";
                 } elseif (in_array($this->config->item('student_group', 'ion_auth'), $groupsName)) {
                     $redirect = '/' . $this->config->item('student_group', 'ion_auth');
                 }

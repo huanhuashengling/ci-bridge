@@ -1,6 +1,31 @@
 <div class="container" id="classroom-evaluation">
-    <div><a class="btn btn-primary" href="/teacher/classes-selection">返回班级选择</a></div>
-    <div id="students-selection">
+    <?php 
+    echo $this->load->view('teacher/partial/classes_selection', [
+        'classesData' => $classesData,
+        'hideClassSelection' => $hideClassSelection,
+    ], true);
+    ?>
+
+    <?php 
+    echo $this->load->view('teacher/partial/students_selection', [
+        'selectedStudentsData' => $selectedStudentsData,
+        'hideStudentsSelection' => ("hidden" == $hideClassSelection)?"":"hidden",
+    ], true);
+    ?>
+
+    <?php 
+    echo $this->load->view('teacher/partial/comment_selection', [
+        'courses' => $courses,
+        'evaluationIndexInfo' => $evaluationIndexInfo,
+        'evaluationIndexHtml' => $evaluationIndexHtml,
+        'evaluationDetailHtml' => $evaluationDetailHtml,
+        'evaluationDetailInfo' => $evaluationDetailInfo,
+        'hideCommentSelection' => ("hidden" == $hideClassSelection)?"":"hidden",
+    ], true);
+    ?>
+    
+    <!-- <div id="students-selection">
+        <div><a class="btn btn-primary" href="/teacher/classes-selection">返回班级选择</a></div>
         <h4>请选择评价的学生</h4>
         <?php
             if (isset($selectedStudentsData)) {
@@ -23,9 +48,9 @@
                 echo "</tr></table>";
             }
         ?>
-    </div>
+    </div> -->
 
-    <div id="comment-selection">
+    <!-- <div id="comment-selection">
         <h4>请选择评价信息</h4>
         <?php
           if (isset($courses)) {
@@ -70,7 +95,7 @@
           }
             
         ?>
-    </div>
+    </div> -->
 
     <div id="addPop" class="modal fade" data-show="true">
       <div class="modal-dialog modal-lg">

@@ -48,7 +48,6 @@ class Generic extends CI_Controller
     {
         // if not logged in yet, get english even though we don't use them...
         $params = $this->_getParams();
-
         //************ now call page
         if (!isset($obj['header'])) {
             $obj['header']  = $this->load->view('header', $params, true);

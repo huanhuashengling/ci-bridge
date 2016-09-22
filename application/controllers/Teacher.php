@@ -2,26 +2,37 @@
 
 include_once(APPPATH . 'controllers/Generic.php');
 
-class Teacher extends Generic {
-
+class Teacher extends Generic
+{
     function __construct()
     {
         parent::__construct();
+        $this->_checkLogin();
         $this->load->model('UsersModel');
         $this->load->library('Ion_auth');
     }
 
+    public function _checkLogin()
+    {
+        $usersId = $this->session->userdata("user_id");
+        if (!isset($usersId)) {
+            redirect('/user/login','refresh');
+        }
+    }
+
     function index()
     {
+        $params = $this->_getParams();
         $obj = [
             'body' => $this->load->view('teacher/index', [], true),
             'csses' => [],
             'jses' => [],
+            'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
     }
 
-    public function classesSelection()
+    public function loadCommentArea()
     {
         $this->session->unset_userdata('classesId');
 
@@ -30,30 +41,49 @@ class Teacher extends Generic {
         if (array_key_exists('classesId', $post)) {
             $classesId = $post['classesId'];
             $this->session->set_userdata('classesId', $classesId);
-            return true;
+
+            $studentsHtml = $this->getStudentsHtml($classesId);
+            
+            $usersId = $this->session->userdata("user_id");
+            $courseHtml = $this->getCourseHtml($usersId);
+            $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+
+            $evaluationIndexHtml = $this->getEvaluationIndexHtml($courses[0]['id']);
+            
+            $evaluationIndexInfo = $this->UsersModel->getCourseEvaluationIndexs($courses[0]['id']);
+
+            $evaluationDetailHtml = $this->getEvaluationDetailHtml($evaluationIndexInfo[0]['id']);
+
+            $response = ['courseHtml' => $courseHtml, 'studentsHtml' => $studentsHtml, 'evaluationIndexHtmlContent' => $evaluationIndexHtml, 'evaluationDetailHtmlContent' => $evaluationDetailHtml];
+
+            echo json_encode($response);
         }
+
+    }
+
+    public function classroomEvaluation($isResetClass = NULL)
+    {
+        $usersId = $this->session->userdata("user_id");
+        $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
+
+        if (isset($isResetClass) && "reset" == $isResetClass) {
+            $this->session->unset_userdata("classesId");
+        } else {
+            $classesId = $this->session->unset_userdata("classesId");
+        }
+        $selectedStudentsData = [];
+        $hideClassSelection = "";
+        if (isset($classesId)) {
+            $hideClassSelection = "hidden";
+            $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
+        }
+
         $classes = $this->UsersModel->getClasses();
         $classesData = [];
         foreach ($classes as $key => $class) {
             $classesData[$class['grade_number']][] = $class;
         }
 
-        $obj = [
-            'body' => $this->load->view('teacher/classes_selection', [
-                'classesData' => $classesData], true),
-            'csses' => [],
-            'jses' => ['/js/pages/classes-selection.js'],
-        ];
-        $this->_render($obj);
-    }
-
-    public function classroomEvaluation()
-    {
-        $usersId = $this->session->userdata("user_id");
-        $classesId = $this->session->userdata("classesId");
-        if (!isset($usersId)) {
-            redirect('/user/login','refresh');
-        }
         $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
         $evaluationIndexData = [];
         $evaluationDetailData = [];
@@ -66,10 +96,13 @@ class Teacher extends Generic {
         $evaluationDetailInfo = $this->UsersModel->getCourseEvaluationDetails($defaultEvaluationIndexsId);
         $evaluationDetailHtml = $this->getEvaluationDetailHtml($defaultEvaluationIndexsId);
 
-        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
-
+        $params = $this->_getParams();
+        $params['courseLeader'] = '';
+        $params['classTeacher'] = '';
         $obj = [
             'body' => $this->load->view('teacher/classroom_evaluation', [
+                                        'classesData' => $classesData,
+                                        'hideClassSelection' => $hideClassSelection,
                                         'selectedStudentsData' => $selectedStudentsData,
                                         'courses' => $courses,
                                         'defaultCoursesId' => $defaultCoursesId,
@@ -79,6 +112,7 @@ class Teacher extends Generic {
                                         'evaluationDetailInfo' => $evaluationDetailInfo], true),
             'csses' => [],
             'jses' => ['/js/pages/classroom-evaluation.js'],
+            'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
     }
@@ -116,9 +150,6 @@ class Teacher extends Generic {
     public function courseEvaluationManagement()
     {
         $usersId = $this->session->userdata("user_id");
-        if (!isset($usersId)) {
-            redirect('/user/login','refresh');
-        }
 
         $currentOperate = $this->input->post("currentOperate", true);
         if (isset($currentOperate)) {
@@ -166,11 +197,14 @@ class Teacher extends Generic {
         
 
         $data = $this->getEvaluationInfo($usersId);
+        
+        $params = $this->_getParams();
         $obj = [
             'body' => $this->load->view('teacher/course_evaluation_management', 
                 $data, true),
             'csses' => [],
             'jses' => ['/js/pages/course-evaluation-management.js'],
+            'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
     }
@@ -197,61 +231,17 @@ class Teacher extends Generic {
 
     public function classStudentInfo()
     {
+        $params = $this->_getParams();
         $obj = [
             'body' => $this->load->view('teacher/class_student_info', [], true),
             'csses' => [],
             'jses' => [],
+            'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
     }
 
-    public function studentsDataManagement()
-    {
-        $usersId = $this->session->userdata("user_id");
-        if (!isset($usersId)) {
-            redirect('/user/login','refresh');
-        }
 
-        if (array_key_exists('csvfile', $_FILES)) {
-            $file = $_FILES['csvfile'];
-        
-            if ($file['size'] > 0) {
-                if ($file['type'] === 'text/csv') {
-
-                    $csv = file_get_contents($file['tmp_name']);
-                    $rowList = array_map("str_getcsv", explode("\r", $csv));
-
-                    $validNames= ['username', 'password', 'firstName', 'classesId', 'eduStartingYear', 'cityStudentNumber', 'nationalStudentNumber', 'gender', 'birthDate'];
-
-                    $fileHeader = array_shift($rowList);
-                    
-                    $difference = array_diff($validNames, $fileHeader);
-                    if ($difference) {
-                        // var_dump($difference);die("ss");
-                        // $output['error'] = 'File header is not correct! Please check these labels in first line of file: ' . implode(",", $difference);
-                    } else {
-                        foreach ($rowList as $key => $row) {
-                            $studentData = array_combine($validNames, $row);
-
-                            $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
-                            $studentData['usersId'] = $studentsId;
-                            $evaluationDetails = $this->UsersModel->addStudentAddtionalData($studentData);
-                        }
-                    }
-                } else {
-                    // $output['error'] = 'File format is not correct!';
-                }
-            }
-        }
-
-        
-        $obj = [
-            'body' => $this->load->view('teacher/students-data-management', [], true),
-            'csses' => [],
-            'jses' => [],
-        ];
-        $this->_render($obj);
-    }
 
     public function classEvaluationCount()
     {
@@ -287,6 +277,54 @@ class Teacher extends Generic {
 
         $evaluationDetailHtml = $this->getEvaluationDetailHtml($evaluationIndexsId);
         echo $evaluationDetailHtml;
+    }
+
+    public function getIndexEvaluateContent()
+    {
+        $post = $this->input->post();
+        $evaluationIndexsId = $post['evaluationIndexsId'];
+
+        $evaluationDetailHtml = $this->getEvaluationDetailHtml($evaluationIndexsId);
+        echo $evaluationDetailHtml;
+    }
+
+    public function getStudentsHtml($classesId)
+    {
+        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
+
+        $maxNumPerLine = 4;
+            $num = 0;
+        $studentsHtml = "<div><a class='btn btn-primary' href='/teacher/classroom-evaluation'>返回班级选择</a></div>";
+        $studentsHtml =  $studentsHtml . "<table class='table table-striped table-hover table-condensed'><tr>";
+            
+            foreach ($selectedStudentsData as $key => $student) {
+              $btnClass = (0 == $student['gender'])?"btn-danger":"btn-primary";
+              $gender = (0 == $student['gender'])?"gender='girl'":"gender='boy'";
+              if ($num < $maxNumPerLine) {
+                $num++;
+                $studentsHtml =  $studentsHtml . "<td><button class='btn " . $btnClass . " student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td>";
+              } else {
+                $num = 0;
+                $studentsHtml =  $studentsHtml . "<td><button class='btn " . $btnClass . " student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td></tr><tr>";
+              }
+                    
+            }
+            $studentsHtml =  $studentsHtml . "</tr></table>";
+
+        return $studentsHtml;
+    }
+
+    public function getCourseHtml($usersId)
+    {
+        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        $courseHtml = "<div class='btn-group' id='course-btn-group' name='course-btn-group' data-toggle='buttons'>";
+        $courseActive = "active";
+        foreach ($courses as $key => $course) {
+          $courseHtml = $courseHtml . "<label class='btn btn-default " .$courseActive. "'><input type='radio' id='" . $course['id'] . "'>" . $course['name'] . "</label>";
+          $courseActive = "";
+        }
+        $courseHtml = $courseHtml . "</div>";
+        return $courseHtml;
     }
 
     public function getEvaluationIndexHtml($coursesId)
