@@ -1,6 +1,6 @@
 <div class="container">
     <h4>班级学生信息导入</h4>
-    <?php echo form_open_multipart('/teacher/students-data-management'); ?>
+    <?php echo form_open_multipart('/school/students-data-management'); ?>
         <div class="form-group">
             <div class="widget col-xs-12">
                 <div class="widget-controls">

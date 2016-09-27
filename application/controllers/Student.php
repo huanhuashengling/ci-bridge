@@ -38,11 +38,14 @@ class Student extends Generic {
 
         $usersId = $this->session->userdata("user_id");
         $courses = $this->UsersModel->getCourses();
-        $evaludateCount = $this->UsersModel->getEvaluateCountByStudentsId();
-
+        $evaluateCount = $this->UsersModel->getEvaluateCountByStudentsId($usersId);
+        $evaluateCountHtml = [];
+        foreach ($evaluateCount as $key => $evaluateItem) {
+            $evaluateCountHtml[] = $this->getCourseCountItemHtml($evaluateItem);
+        }
         $params = $this->_getParams();
         $obj = [
-            'body' => $this->load->view('student/star_swallow', [], true),
+            'body' => $this->load->view('student/star_swallow', ['evaluateCountHtml' => $evaluateCountHtml], true),
             'csses' => [],
             'jses' => [],
             'header' => $this->load->view('student/header', $params, true),
@@ -50,10 +53,9 @@ class Student extends Generic {
         $this->_render($obj);
     }
 
-    public function getCourseCountItemHtml()
+    public function getCourseCountItemHtml($evaluateItem)
     {
-        $courseCountItemHtml = "<table class='table table-striped table-hover table-condensed'><tr><td>语文</td></tr></table>";
-
+        $courseCountItemHtml = "<div class='col-md-4 col-sm-4'><table class='table table-bordered table-hover table-condensed'><tr><td colspan=2>". $evaluateItem['course_name'] . "</td></tr><tr><td>评价次数</td><td>". $evaluateItem['evaluate_count'] . "</td></tr><tr><td>分数合计</td><td>". $evaluateItem['score'] . "</td></tr></table></div>";
 
         return $courseCountItemHtml;
     }

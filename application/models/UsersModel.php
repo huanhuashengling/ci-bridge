@@ -310,9 +310,12 @@ Class UsersModel extends CI_Model
 
     public function getEvaluateCountByStudentsId($studentsId)
     {
-        $sql = "SELECT e.* FROM evaluation as e 
-                LEFT JOIN courses as c ON c.id = e.courses_id
-                WHERE students_users_id = ?";
+        $sql = "SELECT c.name as course_name, c.id as courses_id, count(*) as evaluate_count, sum(s.score) as score 
+                FROM evaluation as e 
+                LEFT JOIN courses as c ON c.id = e.courses_id 
+                LEFT JOIN scores as s ON s.id = e.scores_id 
+                WHERE students_users_id = ? 
+                GROUP BY courses_id";
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $studentsId, PDO::PARAM_INT);
         $success = $stmt->execute();
