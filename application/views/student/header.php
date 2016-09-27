@@ -13,7 +13,7 @@
         </div>
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li class="<?php echo ($activeLink == 'evaluation-count') ? 'active' : ''; ?>"><a href="/student/evaluation-count">评价统计</a></li>
+            <li class="<?php echo ($activeLink == 'star-swallow') ? 'active' : ''; ?>"><a href="/student/star-swallow">评价统计</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">账户管理 <span class="caret"></span></a>
               <ul class="dropdown-menu">

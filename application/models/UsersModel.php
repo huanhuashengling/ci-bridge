@@ -49,6 +49,19 @@ Class UsersModel extends CI_Model
         return false;
     }
 
+    public function getCourses()
+    {
+        $sql = "SELECT * FROM courses";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
     public function getCourseEvaluationIndexs($coursesId)
     {
         $sql = "SELECT * FROM evaluation_indexs WHERE courses_id = ? ORDER BY order_number ASC";
@@ -290,6 +303,22 @@ Class UsersModel extends CI_Model
         if ($success) {
             $itemId = $this->db->insert_id();
             return $itemId;
+        }
+        
+        return false;
+    }
+
+    public function getEvaluateCountByStudentsId($studentsId)
+    {
+        $sql = "SELECT e.* FROM evaluation as e 
+                LEFT JOIN courses as c ON c.id = e.courses_id
+                WHERE students_users_id = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $studentsId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
         }
         
         return false;

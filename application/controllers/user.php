@@ -88,7 +88,7 @@ class User extends Generic {
 
                     $redirect = '/' . $this->config->item('teacher_group', 'ion_auth') . "/classroom-evaluation";
                 } elseif (in_array($this->config->item('student_group', 'ion_auth'), $groupsName)) {
-                    $redirect = '/' . $this->config->item('student_group', 'ion_auth');
+                    $redirect = '/' . $this->config->item('student_group', 'ion_auth'). "/star-swallow";
                 }
                 redirect($redirect, 'refresh');
             }
