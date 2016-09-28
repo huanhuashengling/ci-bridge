@@ -38,9 +38,20 @@ class Student extends Generic {
 
         $usersId = $this->session->userdata("user_id");
         $courses = $this->UsersModel->getCourses();
-        $evaluateCount = $this->UsersModel->getEvaluateCountByStudentsId($usersId);
+        // var_dump($courses);
         $evaluateCountHtml = [];
-        foreach ($evaluateCount as $key => $evaluateItem) {
+        foreach ($courses as $key => $course) {
+            $evaluateCount = $this->UsersModel->getEvaluateCountByStudentsId($usersId, $course['id']);
+            if (0 == count($evaluateCount)) {
+                $evaluateItem = [
+                    'course_name' => $course['name'],
+                    'courses_id' => $course['id'],
+                    'evaluate_count' => 0,
+                    'score' => 0,
+                ];
+            } else {
+                $evaluateItem = $evaluateCount[0];
+            }
             $evaluateCountHtml[] = $this->getCourseCountItemHtml($evaluateItem);
         }
         $params = $this->_getParams();
@@ -55,7 +66,7 @@ class Student extends Generic {
 
     public function getCourseCountItemHtml($evaluateItem)
     {
-        $courseCountItemHtml = "<div class='col-md-4 col-sm-4'><table class='table table-bordered table-hover table-condensed'><tr><td colspan=2>". $evaluateItem['course_name'] . "</td></tr><tr><td>评价次数</td><td>". $evaluateItem['evaluate_count'] . "</td></tr><tr><td>分数合计</td><td>". $evaluateItem['score'] . "</td></tr></table></div>";
+        $courseCountItemHtml = "<div class='col-md-4 col-sm-4'><table class='table table-bordered table-hover table-condensed'><tr><td colspan=2>". $evaluateItem['course_name'] . "</td></tr><tr><td width='50%'>评价次数</td><td>". $evaluateItem['evaluate_count'] . "</td></tr><tr><td>分数合计</td><td>". $evaluateItem['score'] . "</td></tr></table></div>";
 
         return $courseCountItemHtml;
     }
