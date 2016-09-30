@@ -332,4 +332,20 @@ Class UsersModel extends CI_Model
         return false;
     }
 
+    public function deleteAllStudentsData()
+    {
+        $sql = "DELETE c.* FROM courses_teachers as ct 
+                LEFT JOIN courses as c ON c.id = ct.courses_id
+                WHERE teachers_users_id = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $teachersId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
 }

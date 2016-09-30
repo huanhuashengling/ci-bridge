@@ -1,6 +1,6 @@
 <div class="container">
-    <h4>班级学生信息导入</h4>
-    <?php echo form_open_multipart('/school/students-data-management'); ?>
+    <h4>教师信息导入</h4>
+    <?php echo form_open_multipart('/school/teachers-data-management'); ?>
         <div class="form-group">
             <div class="widget col-xs-12">
                 <div class="widget-controls">
@@ -8,19 +8,6 @@
                 </div>
                 <input type="file" id="importField" class="btn btn-default pull-left" name="csvfile" />
                 <input type="submit" id="importBtn" class="btn btn-default btn-file" value="导入" />
-            </div>
-      </div>
-    <?php echo form_close();?>
-
-    <hr/>
-    <p>
-
-    <h4>移除所有学生信息</h4>
-    <?php echo form_open('/school/delete-students-data'); ?>
-        <div class="form-group">
-            <div class="widget col-xs-12">
-                
-                <input type="submit" class="btn btn-default" value="清空" />
             </div>
       </div>
     <?php echo form_close();?>
