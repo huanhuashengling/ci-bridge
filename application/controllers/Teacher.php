@@ -58,7 +58,6 @@ class Teacher extends Generic
 
             echo json_encode($response);
         }
-
     }
 
     public function classroomEvaluation($isResetClass = NULL)
@@ -95,10 +94,9 @@ class Teacher extends Generic
         $defaultEvaluationIndexsId = $evaluationIndexInfo[0]['id'];
         $evaluationDetailInfo = $this->UsersModel->getCourseEvaluationDetails($defaultEvaluationIndexsId);
         $evaluationDetailHtml = $this->getEvaluationDetailHtml($defaultEvaluationIndexsId);
-
         $params = $this->_getParams();
-        $params['courseLeader'] = '';
-        $params['classTeacher'] = '';
+        $params['courseLeader'] = $user['course_leader'];
+        $params['classTeacher'] = $user['class_teacher'];
         $obj = [
             'body' => $this->load->view('teacher/classroom_evaluation', [
                                         'classesData' => $classesData,
@@ -150,6 +148,7 @@ class Teacher extends Generic
     public function courseEvaluationManagement()
     {
         $usersId = $this->session->userdata("user_id");
+        $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
         $currentOperate = $this->input->post("currentOperate", true);
         if (isset($currentOperate)) {
@@ -199,6 +198,8 @@ class Teacher extends Generic
         $data = $this->getEvaluationInfo($usersId);
         
         $params = $this->_getParams();
+        $params['courseLeader'] = $user['course_leader'];
+        $params['classTeacher'] = $user['class_teacher'];
         $obj = [
             'body' => $this->load->view('teacher/course_evaluation_management', 
                 $data, true),
@@ -231,17 +232,21 @@ class Teacher extends Generic
 
     public function classStudentInfo()
     {
+        $usersId = $this->session->userdata("user_id");
+        $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
+
+        $studentsData = $this->UsersModel->getClassStudentsByClassesId($user['class_teacher']);
         $params = $this->_getParams();
+        $params['courseLeader'] = $user['course_leader'];
+        $params['classTeacher'] = $user['class_teacher'];
         $obj = [
-            'body' => $this->load->view('teacher/class_student_info', [], true),
+            'body' => $this->load->view('teacher/class_student_info', ['studentsData' => $studentsData, 'classesId'=>$user['class_teacher']], true),
             'csses' => [],
             'jses' => [],
             'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
     }
-
-
 
     public function classEvaluationCount()
     {
@@ -250,6 +255,25 @@ class Teacher extends Generic
             'body' => $this->load->view('teacher/class_evaluation_count', [], true),
             'csses' => [],
             'jses' => [],
+        ];
+        $this->_render($obj);
+    }
+
+    public function evaluationHistory()
+    {
+        $usersId = $this->session->userdata("user_id");
+        $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
+
+        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId);
+
+        $params = $this->_getParams();
+        $params['courseLeader'] = $user['course_leader'];
+        $params['classTeacher'] = $user['class_teacher'];
+        $obj = [
+            'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData], true),
+            'csses' => [],
+            'jses' => ['/js/pages/evaluation-history.js'],
+            'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
     }
@@ -277,6 +301,12 @@ class Teacher extends Generic
 
         $evaluationDetailHtml = $this->getEvaluationDetailHtml($evaluationIndexsId);
         echo $evaluationDetailHtml;
+    }
+
+    public function ajaxDeleteEvaluateItem()
+    {
+        $post = $this->input->post();
+        return $this->UsersModel->deleteEvaluateItem($post['evaluationId']);
     }
 
     public function getIndexEvaluateContent()

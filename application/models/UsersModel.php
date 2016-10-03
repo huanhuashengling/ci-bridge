@@ -334,9 +334,7 @@ Class UsersModel extends CI_Model
 
     public function deleteAllStudentsData()
     {
-        $sql = "DELETE c.* FROM courses_teachers as ct 
-                LEFT JOIN courses as c ON c.id = ct.courses_id
-                WHERE teachers_users_id = ?";
+        $sql = "DELETE FROM students WHERE";
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $teachersId, PDO::PARAM_INT);
         $success = $stmt->execute();
@@ -345,6 +343,39 @@ Class UsersModel extends CI_Model
             return $stmt->fetchAll();
         }
         
+        return false;
+    }
+
+    public function getTeacherEvaluationData($usersId)
+    {
+        $sql = "SELECT e.*, c.name as course_name, s.name as score_name, u.username, ei.description as index_desc, ed.description as detail_desc
+                FROM evaluation as e 
+                LEFT JOIN users as u ON u.id = e.students_users_id 
+                LEFT JOIN courses as c ON c.id = e.courses_id 
+                LEFT JOIN scores as s ON s.id = e.scores_id 
+                LEFT JOIN evaluation_indexs as ei ON ei.id = e.evaluation_indexs_id 
+                LEFT JOIN evaluation_details as ed ON ed.id = e.evaluation_details_id 
+                WHERE teachers_users_id = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $usersId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
+    public function deleteEvaluateItem($evaluationId)
+    {
+        $sql = "DELETE FROM evaluation WHERE id=?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $evaluationId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+        if ($success) {
+            return true;
+        }
         return false;
     }
 

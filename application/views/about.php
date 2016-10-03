@@ -8,32 +8,38 @@
       </ol>
       <div class="carousel-inner" role="listbox">
         <div class="item">
-          <img class="first-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="First slide">
+          <img class="first-slide" src="" alt="First slide">
           <div class="container">
             <div class="carousel-caption">
-              <h1>Example headline.</h1>
-              <p>Note: If you're viewing this page via a <code>file://</code> URL, the "next" and "previous" Glyphicon buttons on the left and right might not load/display properly due to web browser security rules.</p>
-              <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+              <h1>学生用户</h1>
+              <p>了解各门功课各个阶段的学习目标</p>
+              <p>助力培养良好的课堂学习习惯</p>
+              <p>促进综合素质提高</p>
+              <!-- <p><a class="btn btn-lg btn-primary" href="#" role="button">了解更多</a></p> -->
             </div>
           </div>
         </div>
         <div class="item">
-          <img class="second-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Second slide">
+          <img class="second-slide" src="" alt="Second slide">
           <div class="container">
             <div class="carousel-caption">
-              <h1>Another example headline.</h1>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+              <h1>教师用户</h1>
+              <p>关注课堂孩子的表现</p>
+              <p>与家长联合一起促进孩子成长</p>
+              <p><a class="btn btn-lg btn-primary hidden" href="#" role="button">了解更多</a></p>
             </div>
           </div>
         </div>
         <div class="item active">
-          <img class="third-slide" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Third slide">
+          <img class="third-slide" src="" alt="Third slide">
           <div class="container">
             <div class="carousel-caption">
-              <h1>One more for good measure.</h1>
-              <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta gravida at eget metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-              <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p>
+              <h1>家长用户</h1>
+              <p>了解孩子在学校的表现情况</p>
+              <p>根据学习情况了解孩子擅长什么</p>
+              <p>可以根据评价反应的问题针对性的教育孩子</p>
+              <p></p>
+              <!-- <p><a class="btn btn-lg btn-primary" href="#" role="button">了解更多</a></p> -->
             </div>
           </div>
         </div>
