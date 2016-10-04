@@ -10,6 +10,7 @@ class School extends Generic
         parent::__construct();
         $this->_checkLogin();
         $this->load->model('UsersModel');
+        $this->load->model('ion_auth_model');
         $this->load->library('Ion_auth');
     }
     
@@ -45,7 +46,7 @@ class School extends Generic
                     $csv = file_get_contents($file['tmp_name']);
                     $rowList = array_map("str_getcsv", explode("\r", $csv));
 
-                    $validNames= ['username', 'password', 'firstName', 'classesId', 'eduStartingYear', 'cityStudentNumber', 'nationalStudentNumber', 'gender', 'birthDate'];
+                    $validNames= ['order', 'username', 'password', 'firstName', 'classesId', 'eduStartingYear', 'cityStudentNumber', 'nationalStudentNumber', 'gender', 'birthDate'];
 
                     $fileHeader = array_shift($rowList);
                     
@@ -56,7 +57,7 @@ class School extends Generic
                     } else {
                         foreach ($rowList as $key => $row) {
                             $studentData = array_combine($validNames, $row);
-
+// var_dump($studentData);die("ss");
                             $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
                             $studentData['usersId'] = $studentsId;
                             $evaluationDetails = $this->UsersModel->addStudentAddtionalData($studentData);
@@ -85,25 +86,29 @@ class School extends Generic
         
             if ($file['size'] > 0) {
                 if ($file['type'] === 'text/csv') {
-
                     $csv = file_get_contents($file['tmp_name']);
+                    // var_dump($csv);
+                    // $rowList = array_map("str_getcsv", explode("\r", $csv));
                     $rowList = array_map("str_getcsv", explode("\r", $csv));
-
-                    $validNames= ['username', 'password', 'firstName', 'classesId', 'eduStartingYear', 'cityStudentNumber', 'nationalStudentNumber', 'gender', 'birthDate'];
+                    // var_dump($rowList);die("ss");
+                    $validNames= ['order', 'username', 'password', 'firstName', 'courseLeader', 'classTeacher'];
 
                     $fileHeader = array_shift($rowList);
                     
                     $difference = array_diff($validNames, $fileHeader);
+                    // var_dump($difference);
+                    // die("asasas");
                     if ($difference) {
                         // var_dump($difference);die("ss");
                         // $output['error'] = 'File header is not correct! Please check these labels in first line of file: ' . implode(",", $difference);
                     } else {
                         foreach ($rowList as $key => $row) {
+                            // var_dump($row);
                             $studentData = array_combine($validNames, $row);
-
-                            $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
+                            // var_dump($studentData);die();
+                            $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [3]);
                             $studentData['usersId'] = $studentsId;
-                            $evaluationDetails = $this->UsersModel->addStudentAddtionalData($studentData);
+                            $evaluationDetails = $this->UsersModel->addTeacherAddtionalData($studentData);
                         }
                     }
                 } else {
@@ -112,11 +117,14 @@ class School extends Generic
             }
         }
 
+        $teachers = $this->UsersModel->getAllTeachers();
+// var_dump($teachers);
+
         $params = $this->_getParams();
         $obj = [
-            'body' => $this->load->view('school/teachers-data-management', [], true),
+            'body' => $this->load->view('school/teachers-data-management', ['teachers' => $teachers], true),
             'csses' => [],
-            'jses' => [],
+            'jses' => ['/js/pages/teacher-data-management.js'],
             'header' => $this->load->view('school/header', $params, true),
         ];
         $this->_render($obj);
@@ -144,13 +152,54 @@ class School extends Generic
 
     public function teacherEvaluationCount()
     {
+        $teachers = $this->UsersModel->getAllTeachers();
+        $teachersEvaluationData = [];
+        foreach ($teachers as $key => $teacher) {
+            $teacherEvaluationData = $this->UsersModel->getTeacherEvaluationData($teacher['id']);
+
+            $teachersEvaluationData[] = [
+                'username' => $teacher['username'],
+                'totalCount' => count($teacherEvaluationData),
+            ];
+        }
+        
+
         $params = $this->_getParams();
         $obj = [
-            'body' => $this->load->view('school/teacher_evaluation_count', [], true),
+            'body' => $this->load->view('school/teacher_evaluation_count', ['teachersEvaluationData' => $teachersEvaluationData], true),
             'csses' => [],
             'jses' => [],
             'header' => $this->load->view('school/header', $params, true),
         ];
         $this->_render($obj);
+    }
+
+    public function ajaxResetTeacherPassword()
+    {
+        $post = $this->input->post();
+        $teacher = $this->UsersModel->getTeachersInfoByUsersId($post['teachersId']);
+        // var_dump($teacher);die();
+        $success = $this->ion_auth_model->reset_password($teacher['username'], '123456');
+        if ($success) {
+            echo "true";
+        } else {
+            echo "false";
+        }
+
+    }
+
+    public function ajaxUpdateTeacherInfo()
+    {
+        $post = $this->input->post();
+        $course = $this->UsersModel->getCourseByName($post['courseLeader']);
+        $class = $this->UsersModel->getClassByName($post['classTeacher']);
+
+        $success = $this->UsersModel->updateTeachersInfo($post['teachersId'], $course['id'], $class['id']);
+        if ($success) {
+            echo "true";
+        } else {
+            echo "false";
+        }
+
     }
 }

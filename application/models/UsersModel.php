@@ -23,7 +23,7 @@ Class UsersModel extends CI_Model
 
     public function getTeachersInfoByUsersId($usersId)
     {
-        $sql = "SELECT * FROM teachers WHERE users_id = ?";
+        $sql = "SELECT t.*, u.* FROM teachers as t LEFT JOIN users as u ON u.id = t.users_id WHERE t.users_id = ?";
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $usersId, PDO::PARAM_INT);
         $success = $stmt->execute();
@@ -271,6 +271,23 @@ Class UsersModel extends CI_Model
         return false;
     }
 
+    public function addTeacherAddtionalData($data)
+    {
+        $sql = "INSERT INTO teachers (users_id, course_leader, class_teacher) values (?,?,?)";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $data['usersId'], PDO::PARAM_INT);
+        $stmt->bindParam(2, $data['courseLeader'], PDO::PARAM_STR);
+        $stmt->bindParam(3, $data['classTeacher'], PDO::PARAM_STR);
+        $success = $stmt->execute();
+
+        if ($success) {
+            $itemId = $this->db->insert_id();
+            return $itemId;
+        }
+        
+        return false;
+    }
+
     public function getCoursesByTeachersId($teachersId)
     {
         $sql = "SELECT c.* FROM courses_teachers as ct 
@@ -345,6 +362,41 @@ Class UsersModel extends CI_Model
         
         return false;
     }
+    
+    public function getAllTeachers()
+    {
+        $sql = "SELECT u.*, t.*, cl.name as class_name, c.name as course_name FROM teachers as t 
+                LEFT JOIN users as u ON u.id = t.users_id
+                LEFT JOIN courses as c ON t.course_leader = c.id
+                LEFT JOIN classes as cl ON cl.id = t.class_teacher
+                WHERE 1";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
+    public function updateTeachersInfo($teachersId, $courseLeader, $classTeacher)
+    {
+        $sql = "UPDATE teachers SET course_leader=?, class_teacher=?
+                WHERE 1
+                AND users_id=?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $courseLeader, PDO::PARAM_INT);
+        $stmt->bindParam(2, $classTeacher, PDO::PARAM_INT);
+        $stmt->bindParam(3, $teachersId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return true;
+        }
+        
+        return false;
+    }
 
     public function getTeacherEvaluationData($usersId)
     {
@@ -376,6 +428,34 @@ Class UsersModel extends CI_Model
         if ($success) {
             return true;
         }
+        return false;
+    }
+
+    public function getCourseByName($courseLeader)
+    {
+        $sql = "SELECT * FROM courses WHERE name = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $courseLeader, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetch();
+        }
+        
+        return false;
+    }
+
+    public function getClassByName($classTeacher)
+    {
+        $sql = "SELECT * FROM classes WHERE name = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $classTeacher, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetch();
+        }
+        
         return false;
     }
 

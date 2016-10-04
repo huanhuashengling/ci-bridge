@@ -109,6 +109,7 @@ $(document).ready(function() {
 					data: data,
 					url: "/teacher/submit-evaluation",
 					success: function(data) {
+						console.log(data);
 						if ("true" ==data) {
 							alert("添加评价成功！");
 						} else {

@@ -46,7 +46,8 @@ class Teacher extends Generic
             
             $usersId = $this->session->userdata("user_id");
             $courseHtml = $this->getCourseHtml($usersId);
-            $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+            // $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+            $courses = $this->UsersModel->getCourses();
 
             $evaluationIndexHtml = $this->getEvaluationIndexHtml($courses[0]['id']);
             
@@ -83,7 +84,8 @@ class Teacher extends Generic
             $classesData[$class['grade_number']][] = $class;
         }
 
-        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        // $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        $courses = $this->UsersModel->getCourses();
         $evaluationIndexData = [];
         $evaluationDetailData = [];
         
@@ -127,13 +129,14 @@ class Teacher extends Generic
         $evaluationDetailsId = $post['evaluationDetailsId'];
         $evaluationLevel = $post['evaluationLevel'];
         $evaluationData = [
-                'evaluateDate' => '2016-12-12',
+                'evaluateDate' => date("Y-m-d h:i:s"),
                 'coursesId' => $coursesId,
                 'evaluationIndexsId' => $evaluationIndexsId,
                 'evaluationDetailsId' => $evaluationDetailsId,
                 'scoresId' => $evaluationLevel,
                 'teachersUsersId' => $usersId,
             ];
+
         foreach ($studentsIds as $studentsId) {
             $evaluationData['studentsUsersId'] = $studentsId;
             $newEvaluationId = $this->UsersModel->submitEvaluation($evaluationData);
@@ -242,7 +245,7 @@ class Teacher extends Generic
         $obj = [
             'body' => $this->load->view('teacher/class_student_info', ['studentsData' => $studentsData, 'classesId'=>$user['class_teacher']], true),
             'csses' => [],
-            'jses' => [],
+            'jses' => ['/js/pages/class-student-info.js'],
             'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
@@ -309,6 +312,32 @@ class Teacher extends Generic
         return $this->UsersModel->deleteEvaluateItem($post['evaluationId']);
     }
 
+    public function ajaxAddStudent()
+    {
+        $post = $this->input->post();
+        $studentData = [
+            'username' => $post['studentName'],
+            'password' => '123456',
+            'firstName' => $post['studentName'],
+            'classesId' => $post['classesId'],
+            'eduStartingYear' => '',
+            'cityStudentNumber' => '',
+            'nationalStudentNumber' => '',
+            'gender' => $post['studentGender'],
+            'birthDate' => '',
+        ];
+
+        $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
+        $studentData['usersId'] = $studentsId;
+        $student = $this->UsersModel->addStudentAddtionalData($studentData);
+
+        if ($studentsId && $student) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function getIndexEvaluateContent()
     {
         $post = $this->input->post();
@@ -346,7 +375,9 @@ class Teacher extends Generic
 
     public function getCourseHtml($usersId)
     {
-        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        // $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        $courses = $this->UsersModel->getCourses();
+
         $courseHtml = "<div class='btn-group' id='course-btn-group' name='course-btn-group' data-toggle='buttons'>";
         $courseActive = "active";
         foreach ($courses as $key => $course) {
