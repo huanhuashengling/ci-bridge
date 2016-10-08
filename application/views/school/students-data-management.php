@@ -13,15 +13,16 @@
     <?php echo form_close();?>
 
     <hr/>
-    <p>
+    <div class="col-md-6">
 
-    <h4>移除所有学生信息</h4>
-    <?php echo form_open('/school/delete-students-data'); ?>
-        <div class="form-group">
-            <div class="widget col-xs-12">
-                
-                <input type="submit" class="btn btn-default" value="清空" />
-            </div>
-      </div>
-    <?php echo form_close();?>
+        <h4>管理班级学生信息</h4>
+            <select class="form-control" id="class-select">
+                <option value="">请选择班级</option>
+            <?php foreach ($classes as $key => $class) :?>
+                <option value="<?=$class['id']?>"><?=$class['name']?></option>
+            <?php endforeach;?>
+            </select>
+            <div id="students-list"></div>
+          </div>
+    </div>
 </div>

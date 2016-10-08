@@ -69,11 +69,14 @@ class School extends Generic
             }
         }
 
+        $classes = $this->UsersModel->getClasses();
+
+
         $params = $this->_getParams();
         $obj = [
-            'body' => $this->load->view('school/students-data-management', [], true),
+            'body' => $this->load->view('school/students-data-management', ['classes' => $classes], true),
             'csses' => [],
-            'jses' => [],
+            'jses' => ['/js/pages/students-data-management.js', '/js/pages/class-student-info.js'],
             'header' => $this->load->view('school/header', $params, true),
         ];
         $this->_render($obj);
@@ -201,5 +204,12 @@ class School extends Generic
             echo "false";
         }
 
+    }
+
+    public function ajaxGetStudentsList()
+    {
+        $post = $this->input->post();
+        $studentsData = $this->UsersModel->getClassStudentsByClassesId($post['classesId']);
+        echo $this->load->view('teacher/class_student_info', ['classesId' => $post['classesId'], 'studentsData' => $studentsData, 'enableDelete' => ''], true);
     }
 }

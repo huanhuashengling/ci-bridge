@@ -243,7 +243,7 @@ class Teacher extends Generic
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
         $obj = [
-            'body' => $this->load->view('teacher/class_student_info', ['studentsData' => $studentsData, 'classesId'=>$user['class_teacher']], true),
+            'body' => $this->load->view('teacher/class_student_info', ['studentsData' => $studentsData, 'classesId'=>$user['class_teacher'], 'enableDelete' => 'disabled'], true),
             'csses' => [],
             'jses' => ['/js/pages/class-student-info.js'],
             'header' => $this->load->view('teacher/header', $params, true),
@@ -313,6 +313,32 @@ class Teacher extends Generic
     }
 
     public function ajaxAddStudent()
+    {
+        $post = $this->input->post();
+        $studentData = [
+            'username' => $post['studentName'],
+            'password' => '123456',
+            'firstName' => $post['studentName'],
+            'classesId' => $post['classesId'],
+            'eduStartingYear' => '',
+            'cityStudentNumber' => '',
+            'nationalStudentNumber' => '',
+            'gender' => $post['studentGender'],
+            'birthDate' => '',
+        ];
+
+        $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
+        $studentData['usersId'] = $studentsId;
+        $student = $this->UsersModel->addStudentAddtionalData($studentData);
+
+        if ($studentsId && $student) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function ajaxDeleteStudent()
     {
         $post = $this->input->post();
         $studentData = [

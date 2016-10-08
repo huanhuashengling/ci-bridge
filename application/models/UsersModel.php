@@ -300,7 +300,6 @@ Class UsersModel extends CI_Model
         if ($success) {
             return $stmt->fetchAll();
         }
-        
         return false;
     }
 

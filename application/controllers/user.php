@@ -116,7 +116,7 @@ class User extends Generic {
                 'type' => 'password',
             );
             $obj = [
-                'body' => $this->load->view('user/login', [], true),
+                'body' => $this->load->view('user/login', ['showError' => false], true),
                 'csses' => [],
                 'jses' => [],
             ];

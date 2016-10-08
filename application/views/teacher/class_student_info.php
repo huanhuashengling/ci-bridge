@@ -18,7 +18,7 @@
                 <td><?=$num?></td>
                 <td><?=$student['username']?></td>
                 <td><?=((1 == $student['gender'])?"男":"女")?></td>
-                <td><button class="btn btn-default delete-btn disabled" value="<?=$student['id']?>">删除</button></td>
+                <td><button class="btn btn-default delete-btn <?=$enableDelete?>" value="<?=$student['id']?>">删除</button></td>
                 </tr>
             <?php endforeach ?>
         </table>
