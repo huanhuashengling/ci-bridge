@@ -9,7 +9,7 @@
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">学生电子成长档案</a>
+            <a class="navbar-brand" href="#">燕山小学明星燕评价系统</a>
         </div>
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
