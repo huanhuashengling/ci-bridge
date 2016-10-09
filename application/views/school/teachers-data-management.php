@@ -41,7 +41,7 @@
             </tr>
         <?php endforeach ?>
         </table>
-        <button class="btn btn-default add-teacher-btn disabled">添加教师</button>
+        <button class="btn btn-default add-teacher-btn">添加教师</button>
     </div>
     
     <div id="popup" class="modal fade" data-show="true">
@@ -53,7 +53,7 @@
           </div>
           <div class="modal-body">
           <input type="text" hidden id="teachers-id">
-          姓名：<input type="text" id="teacher-name" readonly class="form-control"/>
+          姓名：<input type="text" id="teacher-name" class="form-control"/>
           学科组长：<input type="text" id="course-leader" class="form-control"/>
           班主任：<input type="text" id="class-teacher" class="form-control"/>
           <button class="btn btn-primary" id="edit-teacher-info">编辑</button>

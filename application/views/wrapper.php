@@ -22,7 +22,7 @@
     }
     ?>
 
-    <script src="/js/jquery-2.2.0.min.js"></script>
+    <script src="/js/jquery-1.12.4.js"></script>
     <script src="/js/jquery-ui.min.js"></script>
     <script src="/js/jquery.cookie.js"></script>
     <script src="/js/jquery.validate.min.js"></script>

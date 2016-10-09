@@ -55,4 +55,8 @@ $(document).ready(function() {
 				}
 			});
 	});
+
+	$('.add-teacher-btn').click(function(e) {
+		$('#popup').modal('show');
+	});
 });
