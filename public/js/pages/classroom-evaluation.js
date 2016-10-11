@@ -19,6 +19,22 @@ $(document).ready(function() {
 					}
 				});
 		})
+		.on('click', '#select-all', function() {
+			$(".student-btn").removeClass('btn-primary');
+			$(".student-btn").removeClass('btn-danger');
+			$(".student-btn").addClass('btn-success');
+		})
+		.on('click', '#un-select-all', function() {
+			$(".student-btn").each(function(){
+				$(".student-btn").removeClass('btn-success');
+				if ("boy" == $(this).attr('gender')) {
+					$(this).addClass('btn-primary');
+				}
+				if ("girl" == $(this).attr('gender')) {
+					$(this).addClass('btn-danger');
+				}
+			})
+		})
 		.on('click', '.student-btn', function() {
 			if ("boy" == $(this).attr('gender')) {
 				if ($(this).hasClass('btn-primary')) {

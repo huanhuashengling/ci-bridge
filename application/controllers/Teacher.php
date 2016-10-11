@@ -379,7 +379,7 @@ class Teacher extends Generic
 
         $maxNumPerLine = 4;
             $num = 0;
-        $studentsHtml = "<div><a class='btn btn-primary' href='/teacher/classroom-evaluation'>返回班级选择</a></div>";
+        $studentsHtml = "<div><a class='btn btn-primary' href='/teacher/classroom-evaluation'>返回班级选择</a><a class='btn btn-warning pull-right' id='un-select-all'>取消全选</a><a class='btn btn-warning pull-right' id='select-all'>全选名单</a></div>";
         $studentsHtml =  $studentsHtml . "<table class='table table-striped table-hover table-condensed'><tr>";
             
             foreach ($selectedStudentsData as $key => $student) {
