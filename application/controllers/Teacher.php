@@ -281,6 +281,23 @@ class Teacher extends Generic
         $this->_render($obj);
     }
 
+    public function colorfulEvaluate()
+    {
+        $usersId = $this->session->userdata("user_id");
+        $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
+
+        $params = $this->_getParams();
+        $params['courseLeader'] = $user['course_leader'];
+        $params['classTeacher'] = $user['class_teacher'];
+        $obj = [
+            'body' => $this->load->view('teacher/colorful_evaluate', [], true),
+            'csses' => [],
+            'jses' => ['/js/pages/evaluation-history.js'],
+            'header' => $this->load->view('teacher/header', $params, true),
+        ];
+        $this->_render($obj);
+    }
+
     public function ajaxGetCourseEvaluateContent()
     {
         $post = $this->input->post();
