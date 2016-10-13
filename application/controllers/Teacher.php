@@ -401,8 +401,10 @@ class Teacher extends Generic
 
     public function getCourseHtml($usersId)
     {
-        // $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
-        $courses = $this->UsersModel->getCourses();
+        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        if (0 == count($courses)) {
+            $courses = $this->UsersModel->getCourses();
+        }
 
         $courseHtml = "<div class='btn-group' id='course-btn-group' name='course-btn-group' data-toggle='buttons'>";
         $courseActive = "active";

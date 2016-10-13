@@ -378,7 +378,7 @@ Class UsersModel extends CI_Model
         
         return false;
     }
-
+    
     public function updateTeachersInfo($teachersId, $courseLeader, $classTeacher)
     {
         $sql = "UPDATE teachers SET course_leader=?, class_teacher=?
@@ -392,6 +392,36 @@ Class UsersModel extends CI_Model
 
         if ($success) {
             return true;
+        }
+        
+        return false;
+    }
+    
+    public function deleteCoursesTeachersByTeachersId($teachersId)
+    {
+        $sql = "DELETE FROM courses_teachers WHERE teachers_users_id=?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $teachersId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    public function addCoursesTeachers($teachersId, $coursesId)
+    {
+        $sql = "INSERT courses_teachers (courses_id, teachers_users_id) VALUES(?,?)";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $coursesId, PDO::PARAM_INT);
+        $stmt->bindParam(2, $teachersId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            $itemId = $this->db->insert_id();
+            return $itemId;
         }
         
         return false;

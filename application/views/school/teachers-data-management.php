@@ -6,7 +6,7 @@
                 <div class="widget col-xs-12">
                     <div class="widget-controls">
                         <div class="label" style="display: inline-block">只支持上传csv文件</div>
-                    </div>
+                    </div> 
                     <input type="file" id="importField" class="btn btn-default pull-left" name="csvfile" />
                     <input type="submit" id="importBtn" class="btn btn-default btn-file" value="导入" />
                 </div>
@@ -19,9 +19,10 @@
         <table class='table table-striped table-hover table-condensed'>
         <tr>
         <td width="10%">编号</td>
-        <td width="20%">教师姓名</td>
-        <td width="20%">学科组长</td>
-        <td width="20%">班主任</td>
+        <td width="10%">教师姓名</td>
+        <td width="10%">学科组长</td>
+        <td width="10%">班主任</td>
+        <td width="30%">任教学科</td>
         <td width="10%">重置密码</td>
         <td width="10%">操作</td>
         </tr>
@@ -29,13 +30,15 @@
         <?php 
         $num = 0;
         foreach ($teachers as $key => $item): 
+
         $num++;
         ?>
             <tr>
             <td><?=$num?></td>
             <td><?=$item['username']?></td>
-            <td><?=$item['course_name']?></td>
-            <td><?=$item['class_name']?></td>
+            <td coursesId="<?=$item['course_leader']?>"><?=$item['course_name']?></td>
+            <td classesId="<?=$item['class_teacher']?>"><?=$item['class_name']?></td>
+            <td teacherCoursesId="<?=$teacherCoursesId[$item['id']]?>"><?=$teacherCoursesName[$item['id']]?></td>
             <td><button class="btn btn-default reset-btn" value="<?=$item['id']?>">重置</button></td>
             <td><button class="btn btn-default edit-btn" value="<?=$item['id']?>">编辑</button></td>
             </tr>
@@ -53,9 +56,37 @@
           </div>
           <div class="modal-body">
           <input type="text" hidden id="teachers-id">
-          姓名：<input type="text" id="teacher-name" class="form-control"/>
-          学科组长：<input type="text" id="course-leader" class="form-control"/>
-          班主任：<input type="text" id="class-teacher" class="form-control"/>
+          <div class="col-md-2">姓名：</div>
+          <div class="col-md-10"><input type="text" id="teacher-name" class="form-control"/></div><br><br>
+
+          <div class="col-md-2">学科组长：</div>
+          <div class="col-md-10">
+            <?php foreach ($allCourses as $course) : ?>
+              <label class="radio-inline"><input type="radio" name="courseLeader" id="course-leader" value="<?=$course['id']?>"><?=$course['name']?></label>
+            <?php endforeach; ?>
+            <label class="radio-inline"><input type="radio" name="courseLeader" id="course-leader" value="" checked="true">无</label>
+          </div>
+          <br><br>
+
+          <div class="col-md-2">班主任：</div>
+          <div class="col-md-10">
+          <select class="form-control" id="class-teacher">
+            <option value="">请选择</option>
+            <?php foreach ($allClasses as $class) : ?>
+              <option value="<?=$class['id']?>"><?=$class['name']?></option>
+            <?php endforeach; ?>
+          </select>
+          </div>
+          <br><br>
+
+          <div class="col-md-2">任教学科：</div>
+          <div class="col-md-10">
+            <?php foreach ($allCourses as $course) : ?>
+              <label class="checkbox-inline"><input type="checkbox" name="teacherCourse" value="<?=$course['id']?>"><?=$course['name']?></label>
+            <?php endforeach; ?>
+          </div>
+          <br><br>
+
           <button class="btn btn-primary" id="edit-teacher-info">编辑</button>
           <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">取消</button>
           </div>

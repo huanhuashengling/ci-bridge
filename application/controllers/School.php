@@ -121,12 +121,24 @@ class School extends Generic
             }
         }
 
+        $allCourses = $this->UsersModel->getCourses();
+        $allClasses = $this->UsersModel->getClasses();
         $teachers = $this->UsersModel->getAllTeachers();
-// var_dump($teachers);
+        $teacherCourses = [];
+        foreach ($teachers as $key => $teacher) {
+            $courses = $this->UsersModel->getCoursesByTeachersId($teacher['id']);
+            $teacherCoursesId[$teacher['id']] = implode(",", array_column($courses, 'id'));
+            $teacherCoursesName[$teacher['id']] = implode(",", array_column($courses, 'name'));
+        }
 
         $params = $this->_getParams();
         $obj = [
-            'body' => $this->load->view('school/teachers-data-management', ['teachers' => $teachers], true),
+            'body' => $this->load->view('school/teachers-data-management', 
+                                        ['teachers' => $teachers, 
+                                        'teacherCoursesId' => $teacherCoursesId, 
+                                        'teacherCoursesName' => $teacherCoursesName, 
+                                        'allCourses' => $allCourses, 
+                                        'allClasses' => $allClasses], true),
             'csses' => [],
             'jses' => ['/js/pages/teacher-data-management.js'],
             'header' => $this->load->view('school/header', $params, true),
@@ -170,7 +182,6 @@ class School extends Generic
     {
         $post = $this->input->post();
         $teacher = $this->UsersModel->getTeachersInfoByUsersId($post['teachersId']);
-        // var_dump($teacher);die();
         $success = $this->ion_auth_model->reset_password($teacher['username'], '123456');
         if ($success) {
             echo "true";
@@ -183,10 +194,18 @@ class School extends Generic
     public function ajaxUpdateTeacherInfo()
     {
         $post = $this->input->post();
-        $course = $this->UsersModel->getCourseByName($post['courseLeader']);
-        $class = $this->UsersModel->getClassByName($post['classTeacher']);
+        $teacherCourse = $post['teacherCourse'];
 
-        $success = $this->UsersModel->updateTeachersInfo($post['teachersId'], $course['id'], $class['id']);
+        $success = $this->UsersModel->updateTeachersInfo($post['teachersId'], $post['courseLeader'], $post['classTeacher']);
+        if (count($post['teacherCourse']) > 0) {
+            $success = $this->UsersModel->deleteCoursesTeachersByTeachersId($post['teachersId']);
+            if ($success) {
+                foreach ($post['teacherCourse'] as $coursesId) {
+                    $success = $this->UsersModel->addCoursesTeachers($post['teachersId'], $coursesId);
+                }
+            }
+        }
+        
         if ($success) {
             echo "true";
         } else {
