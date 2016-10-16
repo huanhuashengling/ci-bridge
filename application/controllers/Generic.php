@@ -23,6 +23,8 @@ class Generic extends CI_Controller
         }
         $this->_startSession();
         $this->load->library('UtilLibrary');
+        $this->load->library("pagination"); 
+        // $this->load->helper('url');
         // $this->load->library('Session');
         $this->init_native_session();
         

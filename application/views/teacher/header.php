@@ -25,7 +25,8 @@
             <li class="<?php echo ($activeLink == 'course-evaluation-management') ? 'active' : ''; ?>"><a href="/teacher/course-evaluation-management">学科评价设计</a></li>
             <?php endif;?>
             <?php if ($classTeacher) :?>
-            <li class="<?php echo ($activeLink == 'class-student-info') ? 'active' : ''; ?>"><a href="/teacher/class-student-info">班级学生信息</a></li>
+                <li class="<?php echo ($activeLink == 'class-student-info') ? 'active' : ''; ?>"><a href="/teacher/class-student-info">班级学生信息</a></li>
+                <!-- <li class="<?php echo ($activeLink == 'class-evaluation-report') ? 'active' : ''; ?>"><a href="/teacher/class-evaluation-report">班级评价报告</a></li> -->
             <?php endif;?>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">账户管理 <span class="caret"></span></a>

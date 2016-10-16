@@ -268,12 +268,45 @@ class Teacher extends Generic
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
         $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId);
+        $courses = $this->UsersModel->getCourses();
+
+        $config = array();
+        $config["base_url"] = base_url() . "teacher/evaluation-history";
+        $total_row = count($evaluationData);
+        // $total_row = 42;
+        $config["total_rows"] = $total_row;
+        $config["per_page"] = 15;
+        $config['use_page_numbers'] = TRUE;
+        $config['num_links'] = $total_row;
+        $config['cur_tag_open'] = '&nbsp;<a class="current">';
+        $config['cur_tag_close'] = '</a>';
+        $config['next_link'] = '&gt;';
+        $config['prev_link'] = '&lt;';
+
+        $this->pagination->initialize($config);
+        if ($this->uri->segment(3)) {
+            $page = ($this->uri->segment(3)) ;
+        } else {
+            $page = 1;
+        }
+        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, null, $config["per_page"], $page);
+        $startOrder = $config["per_page"] * ($page - 1);
+        $str_links = $this->pagination->create_links();
+        $data["links"] = explode('&nbsp;',$str_links );
+        // var_dump($data["links"]);
+// echo "page  " . $page ."  total_row " . $total_row . "<br><br>";
+
+        if (ceil($total_row / $config["per_page"])> 7) {
+            // echo "asas";
+        }
+
+
 
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
         $obj = [
-            'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData], true),
+            'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData, "data" => $data, 'startOrder' => $startOrder, "courses" => $courses], true),
             'csses' => [],
             'jses' => ['/js/pages/evaluation-history.js'],
             'header' => $this->load->view('teacher/header', $params, true),
