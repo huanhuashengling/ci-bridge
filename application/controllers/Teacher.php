@@ -45,9 +45,12 @@ class Teacher extends Generic
             $studentsHtml = $this->getStudentsHtml($classesId);
             
             $usersId = $this->session->userdata("user_id");
-            $courseHtml = $this->getCourseHtml($usersId);
-            // $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
-            $courses = $this->UsersModel->getCourses();
+
+            $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+            if (0 == count($courses)) {
+                $courses = $this->UsersModel->getCourses();
+            }
+            $courseHtml = $this->getCourseHtml($courses);
 
             $evaluationIndexHtml = $this->getEvaluationIndexHtml($courses[0]['id']);
             
@@ -264,6 +267,7 @@ class Teacher extends Generic
 
     public function evaluationHistory()
     {
+
         $usersId = $this->session->userdata("user_id");
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
@@ -282,6 +286,9 @@ class Teacher extends Generic
         $config['cur_tag_close'] = '</a>';
         $config['next_link'] = '&gt;';
         $config['prev_link'] = '&lt;';
+        // $config['div'] = '#content';
+        // $config['show_count'] = false;
+        // $config['additional_param'] = 'serialize_form()';
 
         $this->pagination->initialize($config);
         if ($this->uri->segment(3)) {
@@ -432,13 +439,8 @@ class Teacher extends Generic
         return $studentsHtml;
     }
 
-    public function getCourseHtml($usersId)
+    public function getCourseHtml($courses)
     {
-        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
-        if (0 == count($courses)) {
-            $courses = $this->UsersModel->getCourses();
-        }
-
         $courseHtml = "<div class='btn-group' id='course-btn-group' name='course-btn-group' data-toggle='buttons'>";
         $courseActive = "active";
         foreach ($courses as $key => $course) {
