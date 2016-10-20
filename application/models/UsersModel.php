@@ -214,12 +214,18 @@ Class UsersModel extends CI_Model
         return false;
     }
     
-    public function getClassStudentsByClassesId($classesId)
+    public function getClassStudentsByClassesId($classesId, $orderBy)
     {
+        $order = "";
+        if (isset($orderBy) && ("name" == $orderBy)) {
+            $order = "ORDER BY CONVERT( username USING gbk )";
+        }
+
         $sql = "SELECT u.*, s.* FROM users as u 
                 LEFT JOIN students as s ON u.id = s.users_id
                 WHERE 1
-                AND s.classes_id = ?";
+                AND s.classes_id = ?
+                $order";
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $classesId, PDO::PARAM_INT);
         $success = $stmt->execute();
@@ -443,7 +449,7 @@ Class UsersModel extends CI_Model
                 WHERE 1
                 AND teachers_users_id = ?
                 $weekNumMatch
-                -- ORDER BY week_num DESC
+                ORDER BY e.evaluate_date DESC
                 $limitMatch";
             // echo $sql;die();
         $stmt = $this->db->conn_id->prepare($sql);

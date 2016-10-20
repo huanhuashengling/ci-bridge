@@ -64,6 +64,15 @@ class Teacher extends Generic
         }
     }
 
+    public function ajaxReloadStudentsList()
+    {
+        $post = $this->input->post();
+        $classesId = $this->session->userdata("classesId");
+
+        echo $this->getStudentsHtml($classesId, $post['orderBy']);
+
+    }
+
     public function classroomEvaluation($isResetClass = NULL)
     {
         $usersId = $this->session->userdata("user_id");
@@ -381,27 +390,8 @@ class Teacher extends Generic
     public function ajaxDeleteStudent()
     {
         $post = $this->input->post();
-        $studentData = [
-            'username' => $post['studentName'],
-            'password' => '123456',
-            'firstName' => $post['studentName'],
-            'classesId' => $post['classesId'],
-            'eduStartingYear' => '',
-            'cityStudentNumber' => '',
-            'nationalStudentNumber' => '',
-            'gender' => $post['studentGender'],
-            'birthDate' => '',
-        ];
 
-        $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
-        $studentData['usersId'] = $studentsId;
-        $student = $this->UsersModel->addStudentAddtionalData($studentData);
-
-        if ($studentsId && $student) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->ion_auth->deactivate($post['studentsId']);
     }
 
     public function getIndexEvaluateContent()
@@ -413,13 +403,17 @@ class Teacher extends Generic
         echo $evaluationDetailHtml;
     }
 
-    public function getStudentsHtml($classesId)
+    public function getStudentsHtml($classesId, $orderBy = null)
     {
-        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
+        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId, $orderBy);
 
-        $maxNumPerLine = 4;
+        $maxNumPerLine = 5;
             $num = 0;
-        $studentsHtml = "<div><a class='btn btn-primary' href='/teacher/classroom-evaluation'>返回班级选择</a><a class='btn btn-warning pull-right' id='un-select-all'>取消全选</a><a class='btn btn-warning pull-right' id='select-all'>全选名单</a></div>";
+        $studentsHtml = "<div class='row'><div class='col-md-3 col-xs-3'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-name'>按姓名排序</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-number'>按学号排序</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='select-all'>全选名单</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='un-select-all'>取消全选</a></div></div>";
         $studentsHtml =  $studentsHtml . "<table class='table table-striped table-hover table-condensed'><tr>";
             
             foreach ($selectedStudentsData as $key => $student) {
