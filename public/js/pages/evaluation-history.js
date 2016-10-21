@@ -12,7 +12,7 @@ $(document).ready(function() {
 		$.ajax({
 				type: 'POST',
 				data: data,
-				url: "/teacher/ajax-delete-evaluate-item",
+				url: "../teacher/ajax-delete-evaluate-item",
 				success: function(data) {
 					listItem.addClass('hidden');
 				}

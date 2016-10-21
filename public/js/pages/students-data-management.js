@@ -5,7 +5,7 @@ $(document).ready(function() {
 		$.ajax({
 				type: 'POST',
 				data: data,
-				url: "/school/ajax-get-students-list",
+				url: "../school/ajax-get-students-list",
 				success: function(data) {
 					// console.log(data);
 					$("#students-list").html(data);

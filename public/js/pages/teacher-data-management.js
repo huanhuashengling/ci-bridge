@@ -43,11 +43,11 @@ $(document).ready(function() {
 		$.ajax({
 				type: 'POST',
 				data: data,
-				url: "/school/ajax-update-teacher-info",
+				url: "../school/ajax-update-teacher-info",
 				success: function(data) {
 					if ("true" == data) {
 						$('#popup').modal('hide');
-						top.location.href = '/school/teachers-data-management';
+						top.location.href = '../school/teachers-data-management';
 					} else {
 						alert("教师信息修改失败！");
 					}

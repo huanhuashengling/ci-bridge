@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>学生成长评价系统</title>
     <link rel="shortcut icon" href="/favicon.ico?v=2" />
-    <link rel="stylesheet" href="/css/basic.css">
-    <link rel="stylesheet" href="/css/carousel.css">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/css/jquery-ui.css">
+    <link rel="stylesheet" href="../css/basic.css">
+    <link rel="stylesheet" href="../css/carousel.css">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/jquery-ui.css">
     <!-- <link rel="stylesheet" href="/css/flatit.css"> -->
     
     <!-- <link rel="stylesheet" href="/js/libraries/tablesorter/css/style_system_data.css"> -->
@@ -22,12 +22,12 @@
     }
     ?>
 
-    <script src="/js/jquery-2.2.0.min.js"></script>
-    <script src="/js/jquery-ui.min.js"></script>
-    <script src="/js/jquery.cookie.js"></script>
-    <script src="/js/jquery.validate.min.js"></script>
-    <script src="/js/bootstrap.min.js"></script>
-    <script src="/js/basic.js"></script>
+    <script src="../js/jquery-2.2.0.min.js"></script>
+    <script src="../js/jquery-ui.min.js"></script>
+    <script src="../js/jquery.cookie.js"></script>
+    <script src="../js/jquery.validate.min.js"></script>
+    <script src="../js/bootstrap.min.js"></script>
+    <script src="../js/basic.js"></script>
     
     
     <!--<script type="text/javascript" src="/js/libraries/tablesorter/jquery.tablesorter.js"></script>
@@ -43,9 +43,9 @@
 
 
     <!-- scripts for Canara -->
-    <script src="/js/libraries/ajax.js"></script>
-    <script src="/js/libraries/validate-methods.js"></script>
-    <script src="/js/libraries/popups.js"></script>
+    <script src="../js/libraries/ajax.js"></script>
+    <script src="../js/libraries/validate-methods.js"></script>
+    <script src="../js/libraries/popups.js"></script>
     <!-- <script src="/js/base.js" type="text/javascript"></script> -->
     <?php
     if (isset($jses)) {

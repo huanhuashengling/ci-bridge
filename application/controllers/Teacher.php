@@ -111,7 +111,7 @@ class Teacher extends Generic
                                         'evaluationDetailHtml' => $evaluationDetailHtml,
                                         'evaluationDetailInfo' => $evaluationDetailInfo], true),
             'csses' => [],
-            'jses' => ['/js/pages/classroom-evaluation.js'],
+            'jses' => ['../js/pages/classroom-evaluation.js'],
             'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
@@ -207,7 +207,7 @@ class Teacher extends Generic
             'body' => $this->load->view('teacher/course_evaluation_management', 
                 $data, true),
             'csses' => [],
-            'jses' => ['/js/pages/course-evaluation-management.js'],
+            'jses' => ['../js/pages/course-evaluation-management.js'],
             'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
@@ -245,7 +245,7 @@ class Teacher extends Generic
         $obj = [
             'body' => $this->load->view('teacher/class_student_info', ['studentsData' => $studentsData, 'classesId'=>$user['class_teacher'], 'enableDelete' => 'disabled'], true),
             'csses' => [],
-            'jses' => ['/js/pages/class-student-info.js'],
+            'jses' => ['../js/pages/class-student-info.js'],
             'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
@@ -275,7 +275,7 @@ class Teacher extends Generic
         $obj = [
             'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData], true),
             'csses' => [],
-            'jses' => ['/js/pages/evaluation-history.js'],
+            'jses' => ['../js/pages/evaluation-history.js'],
             'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);

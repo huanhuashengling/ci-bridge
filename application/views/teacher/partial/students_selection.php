@@ -1,5 +1,5 @@
 <div id="students-selection" class='<?=@$hideStudentsSelection?>'>
-    <div><a class="btn btn-primary" href="/teacher/classroom-evaluation">返回班级选择</a></div>
+    <div><a class="btn btn-primary" href="../teacher/classroom-evaluation">返回班级选择</a></div>
     <h4>请选择评价的学生</h4>
     <?php
         if (isset($selectedStudentsData)) {

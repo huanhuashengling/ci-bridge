@@ -6,7 +6,7 @@ $(document).ready(function() {
 			$.ajax({
 					type: 'POST',
 					data: data,
-					url: "/teacher/load-comment-area",
+					url: "../teacher/load-comment-area",
 					success: function(data) {
 						var response = JSON.parse(data);
 						$("#students-selection").html(response.studentsHtml);
@@ -47,7 +47,7 @@ $(document).ready(function() {
 			$.ajax({
 					type: 'POST',
 					data: data,
-					url: "/teacher/ajax-get-course-evaluate-content",
+					url: "../teacher/ajax-get-course-evaluate-content",
 					success: function(data) {
 						var response = JSON.parse(data);
 						$("#evaluation-index-btn-group").html(response.evaluationIndexHtmlContent);
@@ -63,7 +63,7 @@ $(document).ready(function() {
 			$.ajax({
 					type: 'POST',
 					data: data,
-					url: "/teacher/ajax-get-index-evaluate-content",
+					url: "../teacher/ajax-get-index-evaluate-content",
 					success: function(data) {
 						$("#evaluation-detail-btn-group").html(data)
 					}
@@ -107,7 +107,7 @@ $(document).ready(function() {
 			$.ajax({
 					type: 'POST',
 					data: data,
-					url: "/teacher/submit-evaluation",
+					url: "../teacher/submit-evaluation",
 					success: function(data) {
 						console.log(data);
 						if ("true" ==data) {

@@ -4,9 +4,9 @@ $(document).ready(function() {
 		$.ajax({
 				type: 'POST',
 				data: data,
-				url: "/teacher/classes-selection",
+				url: "../teacher/classes-selection",
 				success: function(data) {
-					location.href = '/teacher/classroom-evaluation';
+					location.href = '../teacher/classroom-evaluation';
 				}
 			});
 	});

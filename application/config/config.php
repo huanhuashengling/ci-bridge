@@ -23,8 +23,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 | a PHP script and you can easily do that on your own.
 |
 */
-// $config['base_url'] = 'http://xx.yanshan.furongedu.com:8001/';
-$config['base_url'] = 'http://ci.bridge';
+$config['base_url'] = 'http://xx.yanshan.furongedu.com/bridge';
+// $config['base_url'] = 'http://ci.bridge';
 
 /*
 |--------------------------------------------------------------------------

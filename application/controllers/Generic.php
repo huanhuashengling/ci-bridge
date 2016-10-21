@@ -17,10 +17,10 @@ class Generic extends CI_Controller
 
         parent::__construct();
 
-        if ($_SERVER["SERVER_PORT"] != 443 && $_SERVER['SERVER_ADDR'] != '127.0.0.1') {
+        // if ($_SERVER["SERVER_PORT"] != 443 && $_SERVER['SERVER_ADDR'] != '127.0.0.1') {
             // only apply https to server requests
             // redirect("https://".$_SERVER['HTTP_HOST']);
-        }
+        // }
         $this->_startSession();
         $this->load->library('UtilLibrary');
         // $this->load->library('Session');

@@ -29,7 +29,7 @@ $(document).ready(function() {
 			$.ajax({
 					type: 'POST',
 					data: data,
-					url: "/teacher/ajax-add-student",
+					url: "../teacher/ajax-add-student",
 					success: function(data) {
 						location.reload();
 						// top.location.href = '/teacher/class-student-info';
@@ -43,7 +43,7 @@ $(document).ready(function() {
 		$.ajax({
 				type: 'POST',
 				data: data,
-				url: "/teacher/ajax-delete-student",
+				url: "../teacher/ajax-delete-student",
 				success: function(data) {
 					listItem.addClass('hidden');
 				}

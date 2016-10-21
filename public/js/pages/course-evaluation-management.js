@@ -99,7 +99,7 @@ $(document).ready(function() {
 				type: 'POST',
 				// dataType:'html',
 				data: data,
-				url: "/teacher/course-evaluation-management",
+				url: "../teacher/course-evaluation-management",
 				success: function(data) {
 					// console.log(data);
 					$("#addPop").modal('hide');
