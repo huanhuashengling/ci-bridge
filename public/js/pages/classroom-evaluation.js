@@ -19,6 +19,22 @@ $(document).ready(function() {
 					}
 				});
 		})
+		.on('click', '#select-all', function() {
+			$(".student-btn").removeClass('btn-primary');
+			$(".student-btn").removeClass('btn-danger');
+			$(".student-btn").addClass('btn-success');
+		})
+		.on('click', '#un-select-all', function() {
+			$(".student-btn").each(function(){
+				$(".student-btn").removeClass('btn-success');
+				if ("boy" == $(this).attr('gender')) {
+					$(this).addClass('btn-primary');
+				}
+				if ("girl" == $(this).attr('gender')) {
+					$(this).addClass('btn-danger');
+				}
+			})
+		})
 		.on('click', '.student-btn', function() {
 			if ("boy" == $(this).attr('gender')) {
 				if ($(this).hasClass('btn-primary')) {
@@ -74,27 +90,37 @@ $(document).ready(function() {
 			  return $(element).val();
 			});
 			if (0 == studentsIds.length) {
-				alert("请选择学生");
+				// alert("请选择学生");
+				$("#addPop").modal("show");
+				$("#pop-title").html("请选择学生");
 				return;
 			}
 			var coursesId = $("div[name='course-btn-group'] .active").children().attr('id');
 			if (!coursesId) {
-				alert("请选择课程");
+				$("#addPop").modal("show");
+				$("#pop-title").html("请选择课程");
+				// alert("请选择课程");
 				return;
 			}
 			var evaluationIndexsId = $("div[name='evaluation-index-btn-group'] .active").children().attr('id');
 			if (!evaluationIndexsId) {
-				alert("请选择评价指标");
+				$("#addPop").modal("show");
+				$("#pop-title").html("请选择评价指标");
+				// alert("请选择评价指标");
 				return;
 			}
 			var evaluationDetailsId = $("div[name='evaluation-detail-btn-group'] .active").children().attr('id');
 			if (!evaluationDetailsId) {
-				alert("请选择评价细则");
+				$("#addPop").modal("show");
+				$("#pop-title").html("请选择评价细则");
+				// alert("请选择评价细则");
 				return;
 			}
 			var evaluationLevel = $("div[name='level-btn-group'] .active").children().attr('id');
 			if (!evaluationLevel) {
-				alert("请选择评价等级");
+				$("#addPop").modal("show");
+				$("#pop-title").html("请选择评价等级");
+				// alert("请选择评价等级");
 				return;
 			}
 			var data = {
@@ -111,11 +137,39 @@ $(document).ready(function() {
 					success: function(data) {
 						console.log(data);
 						if ("true" ==data) {
-							alert("添加评价成功！");
+							$("#addPop").modal("show");
+							$("#pop-title").html("添加评价成功！");
 						} else {
-							alert("添加评价失败！");
+							$("#addPop").modal("show");
+							$("#pop-title").html("添加评价失败！");
 						}
 						resetStudentsSelection();
+					}
+				});
+        })
+        .on('click', "#order-by-name", function(){
+        	var data = {
+					orderBy : "name",
+				};
+        	$.ajax({
+					type: 'POST',
+					data: data,
+					url: "/teacher/ajax-reload-students-list",
+					success: function(data) {
+						$("#students-selection").html(data);
+					}
+				});
+        })
+        .on('click', "#order-by-number", function(){
+        	var data = {
+					orderBy : "number",
+				};
+        	$.ajax({
+					type: 'POST',
+					data: data,
+					url: "/teacher/ajax-reload-students-list",
+					success: function(data) {
+						$("#students-selection").html(data);
 					}
 				});
         })

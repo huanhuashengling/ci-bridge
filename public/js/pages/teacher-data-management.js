@@ -25,21 +25,34 @@ $(document).ready(function() {
 
 	$('.edit-btn').click(function(e) {
 		var teacherName = $(this).closest("tr").eq(0).children(0).eq(1).text();
-		var courseLeader = $(this).closest("tr").eq(0).children(0).eq(2).text();
-		var classTeacher = $(this).closest("tr").eq(0).children(0).eq(3).text();
-		// alert($(this).val());
+		var courseLeader = $(this).closest("tr").eq(0).children(0).eq(2).attr("coursesId");
+		var classTeacher = $(this).closest("tr").eq(0).children(0).eq(3).attr("classesId");
+		var teacherCourses = $(this).closest("tr").eq(0).children(0).eq(4).attr("teacherCoursesId");
+		var values = teacherCourses.split(",");
+
 		$("#teachers-id").val($(this).val());
 		$("#teacher-name").val(teacherName);
-		$("#course-leader").val(courseLeader);
+		if (courseLeader) {
+			$("input:radio[name='courseLeader']").filter('[value='+courseLeader+']').prop('checked', true);
+		}
 		$("#class-teacher").val(classTeacher);
+		if (teacherCourses) {
+			$("input:checkbox[name='teacherCourse']").filter('[value=' + values.join('], [value=') + ']').prop("checked", true);
+		}
 		$('#popup').modal('show');
 	});
 
 	$("#edit-teacher-info").click(function(e){
+		var teacherCourse = [];
+        $('input[name=teacherCourse]:checked').each(function(i){
+          teacherCourse[i] = $(this).val();
+        });
 		var data = {teachersId : $("#teachers-id").val(),
-					courseLeader : $("#course-leader").val(),
+					courseLeader : $('input[name=courseLeader]:checked').val(),
 					classTeacher : $("#class-teacher").val(),
+					teacherCourse : teacherCourse,
 					};
+		console.log(data);
 		$.ajax({
 				type: 'POST',
 				data: data,
@@ -54,5 +67,14 @@ $(document).ready(function() {
 					
 				}
 			});
+	});
+
+	$('.add-teacher-btn').click(function(e) {
+		$('#popup').modal('show');
+		$("#teachers-id").val();
+		$("#teacher-name").val();
+		$("input:radio[name='courseLeader']").prop("checked", false);
+		$("#class-teacher").val();
+		$("input:checkbox[name='teacherCourse']").prop("checked", false);
 	});
 });

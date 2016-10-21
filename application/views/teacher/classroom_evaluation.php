@@ -98,18 +98,17 @@
     </div> -->
 
     <div id="addPop" class="modal fade" data-show="true">
-      <div class="modal-dialog modal-lg">
+      <div class="modal-dialog modal-sm">
         <div class="modal-content data-dump">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h4 class="modal-title" id='pop-title'></h4>
           </div>
           <div class="modal-body">
-          <input type="text" id="pop-input" class="form-control"/>
-          <label id="warning-label"></label>
-          <hr/>
-          <button class="btn btn-primary" id="pop-submit-btn"></button>
-          <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">取消</button>
+          <!-- <input type="text" id="pop-input" class="form-control"/> -->
+          <!-- <label id="warning-label"></label> -->
+          <!-- <hr/> -->
+          <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">确认</button>
           </div>
         </div>
         <!-- /.modal-content --> 

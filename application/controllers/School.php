@@ -12,6 +12,7 @@ class School extends Generic
         $this->load->model('UsersModel');
         $this->load->model('ion_auth_model');
         $this->load->library('Ion_auth');
+        $this->load->helper('download');
     }
     
     public function _checkLogin()
@@ -120,12 +121,24 @@ class School extends Generic
             }
         }
 
+        $allCourses = $this->UsersModel->getCourses();
+        $allClasses = $this->UsersModel->getClasses();
         $teachers = $this->UsersModel->getAllTeachers();
-// var_dump($teachers);
+        $teacherCourses = [];
+        foreach ($teachers as $key => $teacher) {
+            $courses = $this->UsersModel->getCoursesByTeachersId($teacher['id']);
+            $teacherCoursesId[$teacher['id']] = implode(",", array_column($courses, 'id'));
+            $teacherCoursesName[$teacher['id']] = implode(",", array_column($courses, 'name'));
+        }
 
         $params = $this->_getParams();
         $obj = [
-            'body' => $this->load->view('school/teachers-data-management', ['teachers' => $teachers], true),
+            'body' => $this->load->view('school/teachers-data-management', 
+                                        ['teachers' => $teachers, 
+                                        'teacherCoursesId' => $teacherCoursesId, 
+                                        'teacherCoursesName' => $teacherCoursesName, 
+                                        'allCourses' => $allCourses, 
+                                        'allClasses' => $allClasses], true),
             'csses' => [],
             'jses' => ['/js/pages/teacher-data-management.js'],
             'header' => $this->load->view('school/header', $params, true),
@@ -155,23 +168,11 @@ class School extends Generic
 
     public function teacherEvaluationCount()
     {
-        $teachers = $this->UsersModel->getAllTeachers();
-        $teachersEvaluationData = [];
-        foreach ($teachers as $key => $teacher) {
-            $teacherEvaluationData = $this->UsersModel->getTeacherEvaluationData($teacher['id']);
-
-            $teachersEvaluationData[] = [
-                'username' => $teacher['username'],
-                'totalCount' => count($teacherEvaluationData),
-            ];
-        }
-        
-
         $params = $this->_getParams();
         $obj = [
-            'body' => $this->load->view('school/teacher_evaluation_count', ['teachersEvaluationData' => $teachersEvaluationData], true),
+            'body' => $this->load->view('school/teacher_evaluation_count', [], true),
             'csses' => [],
-            'jses' => [],
+            'jses' => ['/js/pages/teacher-evaluation-count.js'],
             'header' => $this->load->view('school/header', $params, true),
         ];
         $this->_render($obj);
@@ -181,7 +182,6 @@ class School extends Generic
     {
         $post = $this->input->post();
         $teacher = $this->UsersModel->getTeachersInfoByUsersId($post['teachersId']);
-        // var_dump($teacher);die();
         $success = $this->ion_auth_model->reset_password($teacher['username'], '123456');
         if ($success) {
             echo "true";
@@ -194,10 +194,18 @@ class School extends Generic
     public function ajaxUpdateTeacherInfo()
     {
         $post = $this->input->post();
-        $course = $this->UsersModel->getCourseByName($post['courseLeader']);
-        $class = $this->UsersModel->getClassByName($post['classTeacher']);
+        $teacherCourse = $post['teacherCourse'];
 
-        $success = $this->UsersModel->updateTeachersInfo($post['teachersId'], $course['id'], $class['id']);
+        $success = $this->UsersModel->updateTeachersInfo($post['teachersId'], $post['courseLeader'], $post['classTeacher']);
+        if (count($post['teacherCourse']) > 0) {
+            $success = $this->UsersModel->deleteCoursesTeachersByTeachersId($post['teachersId']);
+            if ($success) {
+                foreach ($post['teacherCourse'] as $coursesId) {
+                    $success = $this->UsersModel->addCoursesTeachers($post['teachersId'], $coursesId);
+                }
+            }
+        }
+        
         if ($success) {
             echo "true";
         } else {
@@ -211,5 +219,85 @@ class School extends Generic
         $post = $this->input->post();
         $studentsData = $this->UsersModel->getClassStudentsByClassesId($post['classesId']);
         echo $this->load->view('teacher/class_student_info', ['classesId' => $post['classesId'], 'studentsData' => $studentsData, 'enableDelete' => ''], true);
+    }
+
+    public function ajaxGetTeacherEvaluationCount()
+    {
+        $startWeeNum = 34;
+        $post = $this->input->post();
+        $teachersEvaluationData = [];
+        if ("" != $post['weekNum']) {
+            $weekNum = (0 == $post['weekNum'])?null:($post['weekNum'] + $startWeeNum);
+            $teachers = $this->UsersModel->getAllTeachers();
+            foreach ($teachers as $key => $teacher) {
+                $teacherEvaluationData = $this->UsersModel->getTeacherEvaluationData($teacher['id'], $weekNum);
+
+                $teachersEvaluationData[] = [
+                    'username' => $teacher['username'],
+                    'totalCount' => count($teacherEvaluationData),
+                ];
+            }
+            if ("true" == $post['export']) {
+                $this->exportTeacherEvaluationData($teachersEvaluationData);
+            } else {
+                echo $this->load->view('school/partial/teacher_evaluation_list', ['teachersEvaluationData' => $teachersEvaluationData], true);
+            }
+        }
+    }
+
+    public function exportTeacherEvaluationData($stories)
+    {
+        // var_dump($stories);die();
+        $list = $stories;
+        $fp = fopen('php://output', 'w');
+        // fputcsv($fp, "姓名,次数\n");
+        foreach ($list as $fields) {
+            fputcsv($fp, $fields);
+            }
+
+        $data = file_get_contents('php://output'); 
+        $name = 'data.csv';
+
+        // Build the headers to push out the file properly.
+        header('Pragma: public');     // required
+        header('Expires: 0');         // no cache
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Cache-Control: private',false);
+        header('Content-Disposition: attachment; filename="'.basename($name).'"');  // Add the file name
+        header('Content-Transfer-Encoding: binary');
+        header('Connection: close');
+        exit();
+
+        $this->_push_file($name, $data);
+        fclose($fp);
+    }
+
+    public function _push_file($path, $name)
+    {
+          // make sure it's a file before doing anything!
+          if(is_file($path))
+          {
+            // required for IE
+            if(ini_get('zlib.output_compression')) { ini_set('zlib.output_compression', 'Off'); }
+
+            // get the file mime type using the file extension
+            $this->load->helper('file');
+
+            $mime = get_mime_by_extension($path);
+
+            // Build the headers to push out the file properly.
+            header('Pragma: public');     // required
+            header('Expires: 0');         // no cache
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Last-Modified: '.gmdate ('D, d M Y H:i:s', filemtime ($path)).' GMT');
+            header('Cache-Control: private',false);
+            header('Content-Type: '.$mime);  // Add the mime type from Code igniter.
+            header('Content-Disposition: attachment; filename="'.basename($name).'"');  // Add the file name
+            header('Content-Transfer-Encoding: binary');
+            header('Content-Length: '.filesize($path)); // provide file size
+            header('Connection: close');
+            readfile($path); // push it out
+            exit();
+        }
     }
 }

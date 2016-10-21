@@ -45,7 +45,12 @@ $(document).ready(function() {
 				data: data,
 				url: "../teacher/ajax-delete-student",
 				success: function(data) {
-					listItem.addClass('hidden');
+					// console.log(data);
+					if (data) {
+						listItem.addClass('hidden');
+					} else {
+						alert("移除失败！");
+					}
 				}
 			});
 	}

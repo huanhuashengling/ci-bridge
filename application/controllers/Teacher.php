@@ -45,9 +45,12 @@ class Teacher extends Generic
             $studentsHtml = $this->getStudentsHtml($classesId);
             
             $usersId = $this->session->userdata("user_id");
-            $courseHtml = $this->getCourseHtml($usersId);
-            // $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
-            $courses = $this->UsersModel->getCourses();
+
+            $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+            if (0 == count($courses)) {
+                $courses = $this->UsersModel->getCourses();
+            }
+            $courseHtml = $this->getCourseHtml($courses);
 
             $evaluationIndexHtml = $this->getEvaluationIndexHtml($courses[0]['id']);
             
@@ -59,6 +62,15 @@ class Teacher extends Generic
 
             echo json_encode($response);
         }
+    }
+
+    public function ajaxReloadStudentsList()
+    {
+        $post = $this->input->post();
+        $classesId = $this->session->userdata("classesId");
+
+        echo $this->getStudentsHtml($classesId, $post['orderBy']);
+
     }
 
     public function classroomEvaluation($isResetClass = NULL)
@@ -264,16 +276,53 @@ class Teacher extends Generic
 
     public function evaluationHistory()
     {
+
         $usersId = $this->session->userdata("user_id");
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
         $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId);
+        $courses = $this->UsersModel->getCourses();
+
+        $config = array();
+        $config["base_url"] = base_url() . "teacher/evaluation-history";
+        $total_row = count($evaluationData);
+        // $total_row = 42;
+        $config["total_rows"] = $total_row;
+        $config["per_page"] = 15;
+        $config['use_page_numbers'] = TRUE;
+        $config['num_links'] = $total_row;
+        $config['cur_tag_open'] = '&nbsp;<a class="current">';
+        $config['cur_tag_close'] = '</a>';
+        $config['next_link'] = '&gt;';
+        $config['prev_link'] = '&lt;';
+        // $config['div'] = '#content';
+        // $config['show_count'] = false;
+        // $config['additional_param'] = 'serialize_form()';
+
+        $this->pagination->initialize($config);
+        if ($this->uri->segment(3)) {
+            $page = ($this->uri->segment(3)) ;
+        } else {
+            $page = 1;
+        }
+        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, null, $config["per_page"], $page);
+        $startOrder = $config["per_page"] * ($page - 1);
+        $str_links = $this->pagination->create_links();
+        $data["links"] = explode('&nbsp;',$str_links );
+        // var_dump($data["links"]);
+// echo "page  " . $page ."  total_row " . $total_row . "<br><br>";
+
+        if (ceil($total_row / $config["per_page"])> 7) {
+            // echo "asas";
+        }
+
+
 
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
         $obj = [
-            'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData], true),
+            'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData, "data" => $data, 'startOrder' => $startOrder, "courses" => $courses], true),
             'csses' => [],
             'jses' => ['../js/pages/evaluation-history.js'],
             'header' => $this->load->view('teacher/header', $params, true),
@@ -341,27 +390,8 @@ class Teacher extends Generic
     public function ajaxDeleteStudent()
     {
         $post = $this->input->post();
-        $studentData = [
-            'username' => $post['studentName'],
-            'password' => '123456',
-            'firstName' => $post['studentName'],
-            'classesId' => $post['classesId'],
-            'eduStartingYear' => '',
-            'cityStudentNumber' => '',
-            'nationalStudentNumber' => '',
-            'gender' => $post['studentGender'],
-            'birthDate' => '',
-        ];
 
-        $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [4]);
-        $studentData['usersId'] = $studentsId;
-        $student = $this->UsersModel->addStudentAddtionalData($studentData);
-
-        if ($studentsId && $student) {
-            return true;
-        } else {
-            return false;
-        }
+        return $this->ion_auth->deactivate($post['studentsId']);
     }
 
     public function getIndexEvaluateContent()
@@ -373,13 +403,17 @@ class Teacher extends Generic
         echo $evaluationDetailHtml;
     }
 
-    public function getStudentsHtml($classesId)
+    public function getStudentsHtml($classesId, $orderBy = null)
     {
-        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId);
+        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId, $orderBy);
 
-        $maxNumPerLine = 4;
+        $maxNumPerLine = 5;
             $num = 0;
-        $studentsHtml = "<div><a class='btn btn-primary' href='/teacher/classroom-evaluation'>返回班级选择</a></div>";
+        $studentsHtml = "<div class='row'><div class='col-md-3 col-xs-3'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-name'>按姓名排序</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-number'>按学号排序</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='select-all'>全选名单</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='un-select-all'>取消全选</a></div></div>";
         $studentsHtml =  $studentsHtml . "<table class='table table-striped table-hover table-condensed'><tr>";
             
             foreach ($selectedStudentsData as $key => $student) {
@@ -399,11 +433,8 @@ class Teacher extends Generic
         return $studentsHtml;
     }
 
-    public function getCourseHtml($usersId)
+    public function getCourseHtml($courses)
     {
-        // $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
-        $courses = $this->UsersModel->getCourses();
-
         $courseHtml = "<div class='btn-group' id='course-btn-group' name='course-btn-group' data-toggle='buttons'>";
         $courseActive = "active";
         foreach ($courses as $key => $course) {
