@@ -1,8 +1,6 @@
-<?php
-// var_dump($evaluationData[0]);
-?>
 <div class="container">
-    <!--<div class="form-group">
+    <!--<?php echo form_open('', 'id="myform"');?>
+    <div class="form-group">
         <div class="col-sm-2">
             <select id="week-select" class="form-control">
                 <option value="1">2016年下学期</option>
@@ -46,10 +44,11 @@
             <input type="" name="" class="form-control">
         </div>
         <div class="col-sm-2">
-            <button class="btn">搜索</button>
+            <button class="btn" type="submit">搜索</button>
         </div>
-    </div>-->
-
+    </div>
+<?php echo form_close(); ?>-->
+    <div class="content">
     <table class='table table-hover table-condensed'>
     <tr>
     <td width="5%">编号</td>
@@ -82,11 +81,16 @@
         </tr>
     <?php endforeach ?>
     </table>
+    </div>
     <nav class="pull-right">
-        <ul class="pagination">
-          <?php foreach ($data["links"] as $link) {
-            echo "<li>". $link."</li>";
-            } ?>
-        </ul>
+      <?php foreach ($data["links"] as $link) {
+        echo $link;
+        } ?>
     </nav>
 </div>
+
+<script type="text/javascript">
+    function serialize_form() {
+        return $('#myform').serialize();
+    }
+</script>

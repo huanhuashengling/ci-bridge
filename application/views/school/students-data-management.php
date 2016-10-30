@@ -16,13 +16,19 @@
     <div class="col-md-6">
 
         <h4>管理班级学生信息</h4>
+            <div class="col-xs-7">
+                <input type="checkbox" id="show-inactive" checked>显示未激活学生
+            </div>
+
+            <div class="col-xs-7">
             <select class="form-control" id="class-select">
                 <option value="">请选择班级</option>
-            <?php foreach ($classes as $key => $class) :?>
-                <option value="<?=$class['id']?>"><?=$class['name']?></option>
-            <?php endforeach;?>
+                <?php foreach ($classes as $key => $class) :?>
+                    <option value="<?=$class['id']?>"><?=$class['name']?></option>
+                <?php endforeach;?>
             </select>
-            <div id="students-list"></div>
+            </div>
+            <div id="students-list"  class="col-xs-7"></div>
           </div>
     </div>
 </div>

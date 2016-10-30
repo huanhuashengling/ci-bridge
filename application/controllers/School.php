@@ -217,7 +217,9 @@ class School extends Generic
     public function ajaxGetStudentsList()
     {
         $post = $this->input->post();
-        $studentsData = $this->UsersModel->getClassStudentsByClassesId($post['classesId']);
+        $showInactive = ("true" == $post['showInactive'])?true:false;
+        $studentsData = $this->UsersModel->getClassStudentsByClassesId($post['classesId'], $showInactive);
+
         echo $this->load->view('teacher/class_student_info', ['classesId' => $post['classesId'], 'studentsData' => $studentsData, 'enableDelete' => ''], true);
     }
 

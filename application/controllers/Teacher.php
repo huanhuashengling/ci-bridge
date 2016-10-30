@@ -111,6 +111,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
+        $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/classroom_evaluation', [
                                         'classesData' => $classesData,
@@ -215,6 +216,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
+        $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/course_evaluation_management', 
                 $data, true),
@@ -254,6 +256,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
+        $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/class_student_info', ['studentsData' => $studentsData, 'classesId'=>$user['class_teacher'], 'enableDelete' => 'disabled'], true),
             'csses' => [],
@@ -263,13 +266,26 @@ class Teacher extends Generic
         $this->_render($obj);
     }
 
-    public function classEvaluationCount()
+    public function classDailyEvaluate()
     {
+        $usersId = $this->session->userdata("user_id");
+        $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
+        $classes = $this->UsersModel->getClasses();
+        $classesData = [];
+        foreach ($classes as $key => $class) {
+            $classesData[$class['grade_number']][] = $class;
+        }
+
+        $params = $this->_getParams();
+        $params['courseLeader'] = $user['course_leader'];
+        $params['classTeacher'] = $user['class_teacher'];
+        $params['manager'] = $user['manager'];
         $obj = [
-            'body' => $this->load->view('teacher/class_evaluation_count', [], true),
+            'body' => $this->load->view('teacher/class_daily_evaluate', ['classesData' => $classesData], true),
             'csses' => [],
             'jses' => [],
+            'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
     }
@@ -286,18 +302,18 @@ class Teacher extends Generic
         $config = array();
         $config["base_url"] = base_url() . "teacher/evaluation-history";
         $total_row = count($evaluationData);
-        // $total_row = 42;
         $config["total_rows"] = $total_row;
-        $config["per_page"] = 15;
+        $config["per_page"] = 20;
         $config['use_page_numbers'] = TRUE;
-        $config['num_links'] = $total_row;
-        $config['cur_tag_open'] = '&nbsp;<a class="current">';
-        $config['cur_tag_close'] = '</a>';
-        $config['next_link'] = '&gt;';
-        $config['prev_link'] = '&lt;';
-        // $config['div'] = '#content';
-        // $config['show_count'] = false;
-        // $config['additional_param'] = 'serialize_form()';
+        $config['num_links'] = 2;
+        // $config['cur_tag_open'] = '&nbsp;<a class="current">';
+        // $config['cur_tag_close'] = '</a>';
+        // $config['next_link'] = '&gt;';
+        // $config['prev_link'] = '&lt;';
+        // $config['first_link'] = '&lt;&lt;';
+        // $config['last_link'] = '&gt;&gt;';
+        // $config['num_tag_open'] = '<li>';
+        // $config['num_tag_close'] = '</li>';
 
         $this->pagination->initialize($config);
         if ($this->uri->segment(3)) {
@@ -309,18 +325,11 @@ class Teacher extends Generic
         $startOrder = $config["per_page"] * ($page - 1);
         $str_links = $this->pagination->create_links();
         $data["links"] = explode('&nbsp;',$str_links );
-        // var_dump($data["links"]);
-// echo "page  " . $page ."  total_row " . $total_row . "<br><br>";
-
-        if (ceil($total_row / $config["per_page"])> 7) {
-            // echo "asas";
-        }
-
-
 
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
+        $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData, "data" => $data, 'startOrder' => $startOrder, "courses" => $courses], true),
             'csses' => [],
@@ -390,8 +399,20 @@ class Teacher extends Generic
     public function ajaxDeleteStudent()
     {
         $post = $this->input->post();
+        // $studentsId = $post['studentsId'];
 
-        return $this->ion_auth->deactivate($post['studentsId']);
+
+        echo $this->ion_auth->deactivate($post['studentsId']);
+    }
+
+    public function ajaxActiveStudent()
+    {
+        $post = $this->input->post();
+        if ("activate" == $post['action']) {
+            echo $this->ion_auth->activate($post['studentsId']);
+        } else {
+            echo $this->ion_auth->deactivate($post['studentsId']);
+        }
     }
 
     public function getIndexEvaluateContent()
@@ -405,7 +426,7 @@ class Teacher extends Generic
 
     public function getStudentsHtml($classesId, $orderBy = null)
     {
-        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId, $orderBy);
+        $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId, false, $orderBy);
 
         $maxNumPerLine = 5;
             $num = 0;

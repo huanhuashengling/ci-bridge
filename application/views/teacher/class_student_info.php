@@ -4,20 +4,30 @@
         <table class='table table-striped table-hover table-condensed'>
             <tr>
             <td width="10%">编号</td>
-            <td width="40%">学生姓名</td>
+            <td width="30%">学生姓名</td>
             <td width="10%">性别</td>
+            <td width="20%">激活</td>
             <td width="10%">操作</td>
             </tr>
             <?php $num = 1;?>
             <?php 
             $num = 0;
-            foreach ($studentsData as $key => $student): 
+            foreach ($studentsData as $key => $student):
             $num++;
+            if (1 == $student['active']) {
+              $class = 'btn-danger';
+              $text = '冻结';
+            } else {
+              $class = 'btn-success';
+              $text = '激活';
+            }
+            $activeHtml = "<button class='btn " . $class . " active-btn' value='" . $student['id'] . "' >" . $text . "</button>";
             ?>
                 <tr>
                 <td><?=$num?></td>
                 <td><?=$student['username']?></td>
                 <td><?=((1 == $student['gender'])?"男":"女")?></td>
+                <td><?=$activeHtml?></td>
                 <td><button class="btn btn-default delete-btn <?=$enableDelete?>" value="<?=$student['id']?>">删除</button></td>
                 </tr>
             <?php endforeach ?>

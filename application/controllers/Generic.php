@@ -22,8 +22,8 @@ class Generic extends CI_Controller
             // redirect("https://".$_SERVER['HTTP_HOST']);
         }
         $this->_startSession();
+        $this->load->library('pagination');
         $this->load->library('UtilLibrary');
-        $this->load->library("pagination"); 
         // $this->load->helper('url');
         // $this->load->library('Session');
         $this->init_native_session();

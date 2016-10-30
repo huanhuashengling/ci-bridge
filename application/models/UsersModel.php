@@ -214,8 +214,12 @@ Class UsersModel extends CI_Model
         return false;
     }
     
-    public function getClassStudentsByClassesId($classesId, $orderBy)
+    public function getClassStudentsByClassesId($classesId, $showInactive = false, $orderBy = null)
     {
+        $activeMatch = "";
+        if (!$showInactive) {
+            $activeMatch = "AND u.active = 1";
+        }
         $order = "";
         if (isset($orderBy) && ("name" == $orderBy)) {
             $order = "ORDER BY CONVERT( username USING gbk )";
@@ -225,6 +229,7 @@ Class UsersModel extends CI_Model
                 LEFT JOIN students as s ON u.id = s.users_id
                 WHERE 1
                 AND s.classes_id = ?
+                $activeMatch
                 $order";
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $classesId, PDO::PARAM_INT);
@@ -354,7 +359,21 @@ Class UsersModel extends CI_Model
         return false;
     }
 
-    public function deleteAllStudentsData()
+    // public function deleteAllStudentsData()
+    // {
+    //     $sql = "DELETE FROM students WHERE";
+    //     $stmt = $this->db->conn_id->prepare($sql);
+    //     $stmt->bindParam(1, $teachersId, PDO::PARAM_INT);
+    //     $success = $stmt->execute();
+
+    //     if ($success) {
+    //         return $stmt->fetchAll();
+    //     }
+        
+    //     return false;
+    // }
+
+    public function deleteOneStudent()
     {
         $sql = "DELETE FROM students WHERE";
         $stmt = $this->db->conn_id->prepare($sql);

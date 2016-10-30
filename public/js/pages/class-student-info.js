@@ -1,9 +1,9 @@
 $(document).ready(function() {
 	$(document)
 		.on('click', '.delete-btn', function(e){
-			if (confirm("确认删除这个学生信息吗？")) {
+			if (confirm("确认删除这个学生，同时删除相关所有记录吗？")) {
 				var studentsId = $(this).val();
-		    	deleteEvaluteItem(studentsId, $(this).closest("tr"));
+		    	deleteStudent(studentsId, $(this).closest("tr"));
 		  	}
 		})
 		.on('click', '#add-btn', function() {
@@ -35,17 +35,45 @@ $(document).ready(function() {
 						// top.location.href = '/teacher/class-student-info';
 					}
 				});
+		})
+		.on('click' ,'.active-btn', function(e){
+			var action = "deactivate";
+			if ("激活" == $(this).text()) {
+				action = "activate";
+			}
+			var data = {studentsId : $(this).val(), action : action};
+			var item = $(this);
+			$.ajax({
+				type: 'POST',
+				data: data,
+				url: "/teacher/ajax-active-student",
+				success: function(data) {
+					if (data) {
+						if ("activate" == action) {
+							item.removeClass('btn-success');
+							item.addClass('btn-danger');
+							item.html('冻结');
+						} else {
+							item.removeClass('btn-danger');
+							item.addClass('btn-success');
+							item.html('激活');
+						}
+					} else {
+						alert("操作失败！");
+					}
+				}
+			});
 		});
 
-	function deleteEvaluteItem(studentsId, listItem)
+	function deleteStudent(studentsId, listItem)
 	{
-		var data = {studentsId:studentsId}
+		var data = {studentsId:studentsId};
 		$.ajax({
 				type: 'POST',
 				data: data,
 				url: "/teacher/ajax-delete-student",
 				success: function(data) {
-					// console.log(data);
+					console.log(data);
 					if (data) {
 						listItem.addClass('hidden');
 					} else {
