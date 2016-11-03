@@ -452,8 +452,10 @@ Class UsersModel extends CI_Model
         return false;
     }
 
-    public function getTeacherEvaluationData($usersId, $weekNum = null, $perPage = null, $pageNum = null)
+    public function getTeacherEvaluationData($usersId, $weekNum = null, $perPage = null, $pageNum = null, $classSelect = null, $courseSelect = null, $studentName = null)
     {
+        $classMatch = (!isset($classSelect) || (0 == $classSelect))?"":" AND cl.id = " . $classSelect;
+        $courseMatch = (!isset($courseSelect) || (0 == $courseSelect))?"":" AND c.id = " . $courseSelect;
         $weekNumMatch = (!isset($weekNum) || (0 == $weekNum))?"":" AND weekofyear(e.evaluate_date) = ".$weekNum;
         $limitMatch = isset($perPage)?" LIMIT " . ($perPage * ($pageNum - 1)) . ", " . $perPage:"";
         $sql = "SELECT e.*, weekofyear(e.evaluate_date) as week_num, c.name as course_name, cl.name as class_name, s.name as score_name, u.username, ei.description as index_desc, ed.description as detail_desc
@@ -467,10 +469,12 @@ Class UsersModel extends CI_Model
                 LEFT JOIN evaluation_details as ed ON ed.id = e.evaluation_details_id 
                 WHERE 1
                 AND teachers_users_id = ?
+                $classMatch
+                $courseMatch
                 $weekNumMatch
-                ORDER BY e.evaluate_date DESC
+                ORDER BY e.id DESC
                 $limitMatch";
-            // echo $sql;die();
+            echo $sql;//die();
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $usersId, PDO::PARAM_INT);
         $success = $stmt->execute();

@@ -1,53 +1,54 @@
 <div class="container">
-    <!--<?php echo form_open('', 'id="myform"');?>
+    <!-- <?php echo form_open('', 'id="myform"');?> -->
     <div class="form-group">
-        <div class="col-sm-2">
+        <!-- <div class="col-sm-2">
             <select id="week-select" class="form-control">
                 <option value="1">2016年下学期</option>
                 <option value="2">2017年上学期</option>
             </select>
-        </div>
+        </div> -->
+                <?php //var_dump($weekData);?>
+
         <div class="col-sm-2">
             <select id="week-select" class="form-control">
-                <option value="0">所有周次</option>
-                <option value="1">第一周</option>
-                <option value="2">第二周</option>
-                <option value="3">第三周</option>
-                <option value="4">第四周</option>
-                <option value="5">第五周</option>
-                <option value="6">第六周</option>
-                <option value="7">第七周</option>
-                <option value="8">第八周</option>
-                <option value="9">第九周</option>
-                <option value="10">第十周</option>
-                <option value="11">第十一周</option>
-                <option value="12">第十二周</option>
-                <option value="13">第十三周</option>
-                <option value="14">第十四周</option>
-                <option value="15">第十五周</option>
-                <option value="16">第十六周</option>
-                <option value="17">第十七周</option>
-                <option value="18">第十八周</option>
-                <option value="19">第十九周</option>
-                <option value="20">第二十周</option>
+                <?php foreach ($weekData as $key => $week): ?>
+                        <?php $weekSelected = ($key == $weekSelect)?"selected":""; ?>
+                    <option value="<?=$key?>" <?=$weekSelected?>><?=$week?></option>
+                <?php endforeach ?>
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <select id="class-select" class="form-control">
+                <option value="0">所有班级</option>
+                <?php foreach ($classes as $key => $class): ?>
+                        <?php $classSelected = ($class['id'] == $classSelect)?"selected":""; ?>
+                    <option value="<?=$class['id']?>" <?=$classSelected?>><?=$class['name']?></option>
+                <?php endforeach ?>
             </select>
         </div>
         <div class="col-sm-2">
             <select id="course-select" class="form-control">
                 <option value="0">所有学科</option>
                 <?php foreach ($courses as $key => $course): ?>
-                <option value="<?=$course['id']?>"><?=$course['name']?></option>
+                    <?php $courseSelected = ($course['id'] == $courseSelect)?"selected":""; ?>
+                    <option value="<?=$course['id']?>" <?=$courseSelected?>><?=$course['name']?></option>
                 <?php endforeach ?>
             </select>
         </div>
         <div class="col-sm-2">
-            <input type="" name="" class="form-control">
+            <input type="" name="" placeholder="学生姓名" class="form-control">
         </div>
         <div class="col-sm-2">
-            <button class="btn" type="submit">搜索</button>
+            <button class="btn" id="searchBtn" type="button">搜索</button>
         </div>
     </div>
-<?php echo form_close(); ?>-->
+<!-- <?php echo form_close(); ?> -->
+<!-- <form id='search' class='search' method='post'>
+    <input type='hidden' id='recno' name='recno' />
+    <label for='searchterm'>查找</label>
+    <input id='searchterm' name='searchterm' />
+    <button type='submit'> 搜尋 </button>
+</form> -->
     <div class="content">
     <table class='table table-hover table-condensed'>
     <tr>

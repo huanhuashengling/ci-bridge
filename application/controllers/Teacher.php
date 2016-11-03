@@ -292,12 +292,36 @@ class Teacher extends Generic
 
     public function evaluationHistory()
     {
+        $weekData = ["所有周次", "第一周", "第二周", "第三周", "第四周", "第五周", "第六周", "第七周", "第八周", "第九周", "第十周", "第十一周", "第十二周", "第十三周", "第十四周", "第十五周", "第十六周", "第十七周", "第十八周", "第十九周", "第二十周"];
+        $weekSelect = $this->session->userdata("evaluationHistoryWeekSelect");
+        $classSelect = $this->session->userdata("evaluationHistoryClassSelect");
+        $courseSelect = $this->session->userdata("evaluationHistoryCourseSelect");
+        $weekNum = null;
+        if ($weekSelect) {
+            $startWeeNum = 34;
+            $weekNum = (0 == $weekSelect)?null:($weekSelect + $startWeeNum);
+            echo "<br>----" . $weekNum . "<br>";
+        }
+
+        if ($classSelect) {
+            echo "<br>/////" . $classSelect. "<br>";
+        }
+
+        if ($courseSelect) {
+            echo "<br>,,,," . $courseSelect. "<br>";
+        }
+        
+// var_dump($this->config->item['weekData']);
 
         $usersId = $this->session->userdata("user_id");
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
-        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId);
-        $courses = $this->UsersModel->getCourses();
+        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, $weekNum, null, null, $classSelect, $courseSelect);
+        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        if (0 == count($courses)) {
+            $courses = $this->UsersModel->getCourses();
+        }
+        $classes = $this->UsersModel->getClasses();
 
         $config = array();
         $config["base_url"] = base_url() . "teacher/evaluation-history";
@@ -306,6 +330,7 @@ class Teacher extends Generic
         $config["per_page"] = 20;
         $config['use_page_numbers'] = TRUE;
         $config['num_links'] = 2;
+        // $config['cur_page'] = $recno;
         // $config['cur_tag_open'] = '&nbsp;<a class="current">';
         // $config['cur_tag_close'] = '</a>';
         // $config['next_link'] = '&gt;';
@@ -321,7 +346,7 @@ class Teacher extends Generic
         } else {
             $page = 1;
         }
-        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, null, $config["per_page"], $page);
+        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, $weekNum, $config["per_page"], $page, $classSelect, $courseSelect);
         $startOrder = $config["per_page"] * ($page - 1);
         $str_links = $this->pagination->create_links();
         $data["links"] = explode('&nbsp;',$str_links );
@@ -331,12 +356,29 @@ class Teacher extends Generic
         $params['classTeacher'] = $user['class_teacher'];
         $params['manager'] = $user['manager'];
         $obj = [
-            'body' => $this->load->view('teacher/evaluation_history', ['evaluationData' => $evaluationData, "data" => $data, 'startOrder' => $startOrder, "courses" => $courses], true),
+            'body' => $this->load->view('teacher/evaluation_history', 
+                                    ['evaluationData' => $evaluationData, 
+                                    "data" => $data, 
+                                    'startOrder' => $startOrder,
+                                    "courses" => $courses, 
+                                    'classes' => $classes,
+                                    'weekSelect' => $weekSelect,
+                                    'courseSelect' => $courseSelect,
+                                    'classSelect' => $classSelect,
+                                    'weekData' => $weekData], true),
             'csses' => [],
             'jses' => ['/js/pages/evaluation-history.js'],
             'header' => $this->load->view('teacher/header', $params, true),
         ];
         $this->_render($obj);
+    }
+
+    public function ajaxFilterEvaluationHistory()
+    {
+        $post = $this->input->post();
+        $this->session->set_userdata("evaluationHistoryWeekSelect", $post['weekSelect']);
+        $this->session->set_userdata("evaluationHistoryClassSelect", $post['classSelect']);
+        $this->session->set_userdata("evaluationHistoryCourseSelect", $post['courseSelect']);
     }
 
     public function ajaxGetCourseEvaluateContent()
