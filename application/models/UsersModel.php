@@ -474,7 +474,7 @@ Class UsersModel extends CI_Model
                 $weekNumMatch
                 ORDER BY e.id DESC
                 $limitMatch";
-            echo $sql;//die();
+            // echo $sql."---------------------";//die();
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $usersId, PDO::PARAM_INT);
         $success = $stmt->execute();

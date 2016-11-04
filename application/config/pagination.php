@@ -22,9 +22,9 @@
 $config['per_page'] = 2;
 $config['uri_segment'] = 3;
 $config['num_links'] = 9;
-$config['page_query_string'] = TRUE;
+// $config['page_query_string'] = TRUE;
 // $config['use_page_numbers'] = TRUE;
-$config['query_string_segment'] = 'page';
+// $config['query_string_segment'] = 'page';
 $config['full_tag_open'] = '<div><ul class="pagination">';
 $config['full_tag_close'] = '</ul></div><!--pagination-->';
 $config['first_link'] = '&lt;&lt;';

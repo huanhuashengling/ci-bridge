@@ -300,16 +300,16 @@ class Teacher extends Generic
         if ($weekSelect) {
             $startWeeNum = 34;
             $weekNum = (0 == $weekSelect)?null:($weekSelect + $startWeeNum);
-            echo "<br>----" . $weekNum . "<br>";
+            // echo "<br>----" . $weekNum . "<br>";
         }
 
-        if ($classSelect) {
-            echo "<br>/////" . $classSelect. "<br>";
-        }
+        // if ($classSelect) {
+        //     echo "<br>/////" . $classSelect. "<br>";
+        // }
 
-        if ($courseSelect) {
-            echo "<br>,,,," . $courseSelect. "<br>";
-        }
+        // if ($courseSelect) {
+        //     echo "<br>,,,," . $courseSelect. "<br>";
+        // }
         
 // var_dump($this->config->item['weekData']);
 
@@ -346,6 +346,9 @@ class Teacher extends Generic
         } else {
             $page = 1;
         }
+        // echo "<br>segment  " . $this->uri->segment(4);
+        // echo "<br>per_page  " . $config["per_page"];
+        // echo "<br>page  " . $page;
         $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, $weekNum, $config["per_page"], $page, $classSelect, $courseSelect);
         $startOrder = $config["per_page"] * ($page - 1);
         $str_links = $this->pagination->create_links();
