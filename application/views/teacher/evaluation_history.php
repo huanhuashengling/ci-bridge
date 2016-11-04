@@ -68,8 +68,8 @@
     foreach ($evaluationData as $key => $item): 
     $num++;
     ?>
-        <tr>
-        <td><?=$num?></td>
+        <tr class="item-row">
+        <td><input type="checkbox" name="" class="history-item" value="<?=$item['id']?>">&nbsp<?=$num?></td>
         <td><?=$item['class_name']?></td>
         <td><?=$item['username']?></td>
         <td><?=$item['course_name']?></td>

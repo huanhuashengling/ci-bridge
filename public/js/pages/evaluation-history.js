@@ -47,6 +47,11 @@ $(document).ready(function() {
         filterEvaluationHistory(weekSelect, classSelect, courseSelect);
     });
 
+    $('.item-row').click(function(e){
+    	console.log($(this).closest(".history-item").val());
+    	// $(this).closest("input").attr("checked" ,true);
+    });
+
     function filterEvaluationHistory(weekSelect, classSelect, courseSelect)
     {
     	var data = {weekSelect : weekSelect, classSelect : classSelect, courseSelect : courseSelect}
