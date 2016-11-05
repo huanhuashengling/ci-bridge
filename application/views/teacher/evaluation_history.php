@@ -1,5 +1,4 @@
 <div class="container">
-    <!-- <?php echo form_open('', 'id="myform"');?> -->
     <div class="form-group">
         <!-- <div class="col-sm-2">
             <select id="week-select" class="form-control">
@@ -36,19 +35,16 @@
             </select>
         </div>
         <div class="col-sm-2">
-            <input type="" name="" placeholder="学生姓名" class="form-control">
+            <input type="" name="" id="filter-student-name" placeholder="学生姓名" value="<?=@$studentNameSelect?>" class="form-control">
         </div>
         <div class="col-sm-2">
             <button class="btn" id="searchBtn" type="button">搜索</button>
+            <button class="btn" id="clearFilterBtn" type="button">重置</button>
+        </div>
+        <div class="col-sm-2">
+            <label>查询出：<?=$total_row?>条</label>
         </div>
     </div>
-<!-- <?php echo form_close(); ?> -->
-<!-- <form id='search' class='search' method='post'>
-    <input type='hidden' id='recno' name='recno' />
-    <label for='searchterm'>查找</label>
-    <input id='searchterm' name='searchterm' />
-    <button type='submit'> 搜尋 </button>
-</form> -->
     <div class="content">
     <table class='table table-hover table-condensed'>
     <tr>
@@ -83,6 +79,8 @@
     <?php endforeach ?>
     </table>
     </div>
+    <button class="btn" id="selectAllPageItem">全选</button>
+    <button class="btn" id="deleteSelectedMultiItem">删除</button>
     <nav class="pull-right">
       <?php foreach ($data["links"] as $link) {
         echo $link;

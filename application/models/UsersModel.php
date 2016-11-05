@@ -456,6 +456,7 @@ Class UsersModel extends CI_Model
     {
         $classMatch = (!isset($classSelect) || (0 == $classSelect))?"":" AND cl.id = " . $classSelect;
         $courseMatch = (!isset($courseSelect) || (0 == $courseSelect))?"":" AND c.id = " . $courseSelect;
+        $studentNameMatch = (!isset($studentName) || ("" == $studentName))?"":" AND u.username like '%" . $studentName ."%'";
         $weekNumMatch = (!isset($weekNum) || (0 == $weekNum))?"":" AND weekofyear(e.evaluate_date) = ".$weekNum;
         $limitMatch = isset($perPage)?" LIMIT " . ($perPage * ($pageNum - 1)) . ", " . $perPage:"";
         $sql = "SELECT e.*, weekofyear(e.evaluate_date) as week_num, c.name as course_name, cl.name as class_name, s.name as score_name, u.username, ei.description as index_desc, ed.description as detail_desc
@@ -472,6 +473,7 @@ Class UsersModel extends CI_Model
                 $classMatch
                 $courseMatch
                 $weekNumMatch
+                $studentNameMatch
                 ORDER BY e.id DESC
                 $limitMatch";
             // echo $sql."---------------------";//die();

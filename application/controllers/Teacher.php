@@ -296,33 +296,25 @@ class Teacher extends Generic
         $weekSelect = $this->session->userdata("evaluationHistoryWeekSelect");
         $classSelect = $this->session->userdata("evaluationHistoryClassSelect");
         $courseSelect = $this->session->userdata("evaluationHistoryCourseSelect");
-        $weekNum = null;
-        if ($weekSelect) {
-            $startWeeNum = 34;
-            $weekNum = (0 == $weekSelect)?null:($weekSelect + $startWeeNum);
-            // echo "<br>----" . $weekNum . "<br>";
-        }
-
-        // if ($classSelect) {
-        //     echo "<br>/////" . $classSelect. "<br>";
-        // }
-
-        // if ($courseSelect) {
-        //     echo "<br>,,,," . $courseSelect. "<br>";
-        // }
+        $studentNameSelect = $this->session->userdata("evaluationHistoryStudentNameSelect");
         
-// var_dump($this->config->item['weekData']);
-
+        $startWeeNum = 34;
+        if (!isset($weekSelect)) {
+            $weekNum = date('W', time());
+            $weekSelect = $weekNum - $startWeeNum;
+        } else {
+            $weekNum = (0 == $weekSelect)?null:($weekSelect + $startWeeNum);
+        }
         $usersId = $this->session->userdata("user_id");
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
-        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, $weekNum, null, null, $classSelect, $courseSelect);
+        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, $weekNum, null, null, $classSelect, $courseSelect, $studentNameSelect);
         $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
         if (0 == count($courses)) {
             $courses = $this->UsersModel->getCourses();
         }
         $classes = $this->UsersModel->getClasses();
-
+// var_dump($evaluationData);
         $config = array();
         $config["base_url"] = base_url() . "teacher/evaluation-history";
         $total_row = count($evaluationData);
@@ -346,10 +338,13 @@ class Teacher extends Generic
         } else {
             $page = 1;
         }
+        // if (isset($studentNameSelect)) {
+        //     $page = 1;
+        // }
         // echo "<br>segment  " . $this->uri->segment(4);
         // echo "<br>per_page  " . $config["per_page"];
         // echo "<br>page  " . $page;
-        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, $weekNum, $config["per_page"], $page, $classSelect, $courseSelect);
+        $evaluationData = $this->UsersModel->getTeacherEvaluationData($usersId, $weekNum, $config["per_page"], $page, $classSelect, $courseSelect, $studentNameSelect);
         $startOrder = $config["per_page"] * ($page - 1);
         $str_links = $this->pagination->create_links();
         $data["links"] = explode('&nbsp;',$str_links );
@@ -368,7 +363,9 @@ class Teacher extends Generic
                                     'weekSelect' => $weekSelect,
                                     'courseSelect' => $courseSelect,
                                     'classSelect' => $classSelect,
-                                    'weekData' => $weekData], true),
+                                    'studentNameSelect' => $studentNameSelect,
+                                    'weekData' => $weekData,
+                                    'total_row' => $total_row], true),
             'csses' => [],
             'jses' => ['/js/pages/evaluation-history.js'],
             'header' => $this->load->view('teacher/header', $params, true),
@@ -382,6 +379,7 @@ class Teacher extends Generic
         $this->session->set_userdata("evaluationHistoryWeekSelect", $post['weekSelect']);
         $this->session->set_userdata("evaluationHistoryClassSelect", $post['classSelect']);
         $this->session->set_userdata("evaluationHistoryCourseSelect", $post['courseSelect']);
+        $this->session->set_userdata("evaluationHistoryStudentNameSelect", $post['studentNameSelect']);
     }
 
     public function ajaxGetCourseEvaluateContent()
