@@ -112,7 +112,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
-        $params['manager'] = $user['manager'];
+        // $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/classroom_evaluation', [
                                         'classesData' => $classesData,
@@ -217,7 +217,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
-        $params['manager'] = $user['manager'];
+        // $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/course_evaluation_management', 
                 $data, true),
@@ -257,7 +257,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
-        $params['manager'] = $user['manager'];
+        // $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/class_student_info', ['studentsData' => $studentsData, 'classesId'=>$user['class_teacher'], 'enableDelete' => 'disabled'], true),
             'csses' => [],
@@ -281,7 +281,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
-        $params['manager'] = $user['manager'];
+        // $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/class_daily_evaluate', ['classesData' => $classesData], true),
             'csses' => [],
@@ -353,7 +353,7 @@ class Teacher extends Generic
         $params = $this->_getParams();
         $params['courseLeader'] = $user['course_leader'];
         $params['classTeacher'] = $user['class_teacher'];
-        $params['manager'] = $user['manager'];
+        // $params['manager'] = $user['manager'];
         $obj = [
             'body' => $this->load->view('teacher/evaluation_history', 
                                     ['evaluationData' => $evaluationData, 
