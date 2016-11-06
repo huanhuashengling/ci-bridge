@@ -10,6 +10,7 @@ class Teacher extends Generic
         $this->_checkLogin();
         $this->load->model('UsersModel');
         $this->load->library('Ion_auth');
+        $this->load->library('pinyinfirstchar');
     }
 
     public function _checkLogin()
@@ -469,30 +470,37 @@ class Teacher extends Generic
 
     public function getStudentsHtml($classesId, $orderBy = null)
     {
+        $class = $this->UsersModel->getOneClasses($classesId);
         $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId, false, $orderBy);
 
-        $maxNumPerLine = 5;
-            $num = 0;
-        $studentsHtml = "<div class='row'><div class='col-md-3 col-xs-3'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div>" . 
-            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-name'>按姓名排序</a></div>" . 
+        $maxNumPerLine = 6;
+        if ("name" == $orderBy) {
+            $selectedStudentsData = $this->changeStudentDateToVerticalOrder($selectedStudentsData, $maxNumPerLine);
+        }
+        $num = 1;
+        $studentsHtml = "<div class='row'><div class='col-md-2 col-xs-2'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div><div class='col-md-2 col-xs-2'><h4>".$class['name']."班</h4></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-number'>按学号排序</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-name'>按姓名排序</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='select-all'>全选名单</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='un-select-all'>取消全选</a></div></div>";
         $studentsHtml =  $studentsHtml . "<table class='table table-striped table-hover table-condensed'><tr>";
             
-            foreach ($selectedStudentsData as $key => $student) {
-              $btnClass = (0 == $student['gender'])?"btn-danger":"btn-primary";
-              $gender = (0 == $student['gender'])?"gender='girl'":"gender='boy'";
-              if ($num < $maxNumPerLine) {
-                $num++;
-                $studentsHtml =  $studentsHtml . "<td><button class='btn " . $btnClass . " student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td>";
-              } else {
-                $num = 0;
-                $studentsHtml =  $studentsHtml . "<td><button class='btn " . $btnClass . " student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td></tr><tr>";
-              }
-                    
-            }
-            $studentsHtml =  $studentsHtml . "</tr></table>";
+        foreach ($selectedStudentsData as $key => $student) {
+          $btnClass = (0 == $student['gender'])?"btn-danger":"btn-primary";
+          $gender = (0 == $student['gender'])?"gender='girl'":"gender='boy'";
+          // $firstChar = $this->pinyinfirstchar->getFirstchar(substr($student['username'], 0, 1));
+          $firstChar = $this->pinyinfirstchar->getFirstchar($student['username']);
+          if ($num < $maxNumPerLine) {
+            $num++;
+            $studentsHtml =  $studentsHtml . "<td>".$firstChar."&nbsp;&nbsp<button class='btn " . $btnClass . " student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td>";
+          } else {
+            $num = 1;
+            $hidden = ("" == $student['username'])?"hidden":"";
+            $studentsHtml =  $studentsHtml . "<td>".$firstChar."&nbsp;&nbsp<button class='btn " . $btnClass . " ".$hidden." student-btn' " . $gender . " value='" . $student['id'] . "'>" . $student['username'] . "</button></td></tr><tr>";
+          }
+                
+        }
+        $studentsHtml =  $studentsHtml . "</tr></table>";
 
         return $studentsHtml;
     }
@@ -535,5 +543,24 @@ class Teacher extends Generic
         $evaluationDetailHtml = $evaluationDetailHtml . "</div>";
 
         return $evaluationDetailHtml;
+    }
+
+    public function changeStudentDateToVerticalOrder($selectedStudentsData, $maxNumPerLine)
+    {
+
+        $newSelectedStudentsData = [];
+        $verticalNum = ceil(count($selectedStudentsData)/$maxNumPerLine);
+        // echo "verticalNum  " . $verticalNum . " maxNumPerLine " . $maxNumPerLine . " count " . count($selectedStudentsData);
+        for ($i=0; $i < $verticalNum; $i++) { 
+            for ($j=0; $j < $maxNumPerLine; $j++) { 
+                if (isset($selectedStudentsData[$j * $verticalNum + $i])) {
+                    $newSelectedStudentsData[] = $selectedStudentsData[$j * $verticalNum + $i];
+                } else {
+                    $newSelectedStudentsData[] = ["gender" => 0, 'username'=>"", 'id' => 0];
+                }
+            }
+        }
+        return $newSelectedStudentsData;
+
     }
 }

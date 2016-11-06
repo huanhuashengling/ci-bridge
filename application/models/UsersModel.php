@@ -231,6 +231,7 @@ Class UsersModel extends CI_Model
                 AND s.classes_id = ?
                 $activeMatch
                 $order";
+        // echo $sql;//die();
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $classesId, PDO::PARAM_INT);
         $success = $stmt->execute();
