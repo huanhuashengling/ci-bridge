@@ -1,1 +1,1 @@
-Use for build close connection between school(teachers and school managers), students and parents, in order to bring up outstanding students. 
+我是一名长沙小学信息老师，每当我站在讲台或者看到听到别的老师在每节课重复强调纪律，扯开嗓子大喊大叫，或者课后抱怨现在的课难上。这时外界一种声音说老师应该提高自己课堂的吸引力，不应该抱怨学生没有教养，不尊重老师等等。我想用我所学的编程知识和自己休息时间做一个程序，让学生在校表现与家长相连，给孩子威慑，同时引导孩子成为好孩子（好孩子没有统一的标准，但是看得出来感受得到），
