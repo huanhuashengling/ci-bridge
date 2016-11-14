@@ -226,6 +226,7 @@ class School extends Generic
     public function ajaxGetTeacherEvaluationCount()
     {
         $startWeeNum = 34;
+        $totalCount = 0;
         $post = $this->input->post();
         $teachersEvaluationData = [];
         if ("" != $post['weekNum']) {
@@ -238,11 +239,13 @@ class School extends Generic
                     'username' => $teacher['username'],
                     'totalCount' => count($teacherEvaluationData),
                 ];
+
+                $totalCount += count($teacherEvaluationData);
             }
             if ("true" == $post['export']) {
                 $this->exportTeacherEvaluationData($teachersEvaluationData);
             } else {
-                echo $this->load->view('school/partial/teacher_evaluation_list', ['teachersEvaluationData' => $teachersEvaluationData], true);
+                echo $this->load->view('school/partial/teacher_evaluation_list', ['teachersEvaluationData' => $teachersEvaluationData, 'totalCount' => $totalCount], true);
             }
         }
     }

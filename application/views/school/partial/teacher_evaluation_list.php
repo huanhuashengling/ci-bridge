@@ -18,5 +18,6 @@
             </tr>
         <?php endforeach ?>
         </table>
+        <h5>合计:<?=$totalCount?></h5>
         <button class='btn default export-btn'>导出</button>
     </div>
