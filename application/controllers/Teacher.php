@@ -468,7 +468,7 @@ class Teacher extends Generic
         echo $evaluationDetailHtml;
     }
 
-    public function getStudentsHtml($classesId, $orderBy = null)
+    public function getStudentsHtml($classesId, $orderBy = "name")
     {
         $class = $this->UsersModel->getOneClasses($classesId);
         $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId, false, $orderBy);
@@ -479,8 +479,8 @@ class Teacher extends Generic
         }
         $num = 1;
         $studentsHtml = "<div class='row'><div class='col-md-2 col-xs-2'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div><div class='col-md-2 col-xs-2'><h4>".$class['name']."班</h4></div>" . 
-            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-number'>按学号排序</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-name'>按姓名排序</a></div>" . 
+            "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-number'>按学号排序</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='select-all'>全选名单</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='un-select-all'>取消全选</a></div></div>";
         $studentsHtml =  $studentsHtml . "<table class='table table-striped table-hover table-condensed'><tr>";
