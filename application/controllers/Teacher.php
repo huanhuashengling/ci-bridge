@@ -152,11 +152,14 @@ class Teacher extends Generic
             ];
 
         foreach ($studentsIds as $studentsId) {
-            $evaluationData['studentsUsersId'] = $studentsId;
-            $newEvaluationId = $this->UsersModel->submitEvaluation($evaluationData);
-            if (!$newEvaluationId) {
-                $response = "false";
-            }
+             if ($studentsId) {
+                $evaluationData['studentsUsersId'] = $studentsId;
+                $newEvaluationId = $this->UsersModel->submitEvaluation($evaluationData);
+                if (!$newEvaluationId) {
+                    echo "false";
+                    return;
+                }
+             }
         }
 
         echo $response;
