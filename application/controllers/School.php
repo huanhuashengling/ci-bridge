@@ -225,7 +225,7 @@ class School extends Generic
 
     public function ajaxGetTeacherEvaluationCount()
     {
-        $startWeeNum = 34;
+        $startWeeNum = 6;
         $totalCount = 0;
         $post = $this->input->post();
         $teachersEvaluationData = [];

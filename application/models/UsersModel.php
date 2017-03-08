@@ -471,6 +471,7 @@ Class UsersModel extends CI_Model
                 LEFT JOIN evaluation_details as ed ON ed.id = e.evaluation_details_id 
                 WHERE 1
                 AND teachers_users_id = ?
+                AND 2017 = YEAR(e.evaluate_date)
                 $classMatch
                 $courseMatch
                 $weekNumMatch

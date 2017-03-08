@@ -296,19 +296,28 @@ class Teacher extends Generic
 
     public function evaluationHistory()
     {
+        // $schoolTermData = ['20162' => ['schoolTermName' => '2016年下学期', 'startWeeNum' => 34], '20171' => ['schoolTermName' => '2017年上学期', 'startWeeNum' => 6]];
         $weekData = ["所有周次", "第一周", "第二周", "第三周", "第四周", "第五周", "第六周", "第七周", "第八周", "第九周", "第十周", "第十一周", "第十二周", "第十三周", "第十四周", "第十五周", "第十六周", "第十七周", "第十八周", "第十九周", "第二十周"];
+        // $schoolTermSelect = $this->session->userdata("evaluationHistorySchoolTermSelect");
         $weekSelect = $this->session->userdata("evaluationHistoryWeekSelect");
         $classSelect = $this->session->userdata("evaluationHistoryClassSelect");
         $courseSelect = $this->session->userdata("evaluationHistoryCourseSelect");
         $studentNameSelect = $this->session->userdata("evaluationHistoryStudentNameSelect");
         
-        $startWeeNum = 34;
+        // if (!isset($schoolTermSelect)) {
+        //     $schoolTermSelect = "20171";
+        // }
+
+
+        $startWeeNum = 6;//$schoolTermData[$schoolTermSelect]['startWeeNum'];
+
         if (!isset($weekSelect)) {
             $weekNum = date('W', time());
             $weekSelect = $weekNum - $startWeeNum;
         } else {
             $weekNum = (0 == $weekSelect)?null:($weekSelect + $startWeeNum);
         }
+
         $usersId = $this->session->userdata("user_id");
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
@@ -318,7 +327,7 @@ class Teacher extends Generic
             $courses = $this->UsersModel->getCourses();
         }
         $classes = $this->UsersModel->getClasses();
-// var_dump($evaluationData);
+
         $config = array();
         $config["base_url"] = base_url() . "teacher/evaluation-history";
         $total_row = count($evaluationData);
@@ -360,6 +369,8 @@ class Teacher extends Generic
         $obj = [
             'body' => $this->load->view('teacher/evaluation_history', 
                                     ['evaluationData' => $evaluationData, 
+                                    // 'schoolTermData' => $schoolTermData, 
+                                    // 'schoolTermSelect' => $schoolTermSelect,
                                     "data" => $data, 
                                     'startOrder' => $startOrder,
                                     "courses" => $courses, 
@@ -380,6 +391,7 @@ class Teacher extends Generic
     public function ajaxFilterEvaluationHistory()
     {
         $post = $this->input->post();
+        // $this->session->set_userdata("evaluationHistorySchoolTermSelect", $post['schoolTermSelect']);
         $this->session->set_userdata("evaluationHistoryWeekSelect", $post['weekSelect']);
         $this->session->set_userdata("evaluationHistoryClassSelect", $post['classSelect']);
         $this->session->set_userdata("evaluationHistoryCourseSelect", $post['courseSelect']);
