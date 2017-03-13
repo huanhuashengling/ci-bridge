@@ -52,7 +52,7 @@
         <div class="modal-content data-dump">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h4 class="modal-title">编辑教师信息</h4>
+            <h4 id="modal-title">编辑教师信息</h4>
           </div>
           <div class="modal-body">
           <input type="text" hidden id="teachers-id">

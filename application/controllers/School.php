@@ -108,11 +108,11 @@ class School extends Generic
                     } else {
                         foreach ($rowList as $key => $row) {
                             // var_dump($row);
-                            $studentData = array_combine($validNames, $row);
-                            // var_dump($studentData);die();
-                            $studentsId = $this->ion_auth->register($studentData['username'], $studentData['password'], '', ['first_name' => $studentData['firstName']], [3]);
-                            $studentData['usersId'] = $studentsId;
-                            $evaluationDetails = $this->UsersModel->addTeacherAddtionalData($studentData);
+                            $teacherData = array_combine($validNames, $row);
+                            // var_dump($teacherData);die();
+                            $teachersId = $this->ion_auth->register($teacherData['username'], $teacherData['password'], '', ['first_name' => $teacherData['firstName']], [3]);
+                            $teacherData['usersId'] = $teachersId;
+                            $evaluationDetails = $this->UsersModel->addTeacherAddtionalData($teacherData);
                         }
                     }
                 } else {
@@ -189,6 +189,62 @@ class School extends Generic
             echo "false";
         }
 
+    }
+
+    public function ajaxAddTeacherInfo()
+    {
+        $post = $this->input->post();
+        $teacherCourse = $post['teacherCourse'];
+
+        $success = $this->UsersModel->updateTeachersInfo($post['teachersId'], $post['courseLeader'], $post['classTeacher']);
+        if (count($post['teacherCourse']) > 0) {
+            $success = $this->UsersModel->deleteCoursesTeachersByTeachersId($post['teachersId']);
+            if ($success) {
+                foreach ($post['teacherCourse'] as $coursesId) {
+                    $success = $this->UsersModel->addCoursesTeachers($post['teachersId'], $coursesId);
+                }
+            }
+        }
+        
+        if ($success) {
+            echo "true";
+        } else {
+            echo "false";
+        }
+
+    }
+
+    public function ajaxAddTeacher()
+    {
+        $post = $this->input->post();
+                            
+        $teacherData = [
+            'username' => $post['teacherName'],
+            'password' => '123456',
+            'firstName' => $post['teacherName'],
+            'courseLeader' => $post['courseLeader'],
+            'classTeacher' => $post['classTeacher'],
+            // 'teacherCourse' => $post['teacherCourse'],
+        ];
+
+        $teachersId = $this->ion_auth->register($teacherData['username'], $teacherData['password'], '', ['first_name' => $teacherData['firstName']], [3]);
+        $teacherData['usersId'] = $teachersId;
+        $teacherAddtional = $this->UsersModel->addTeacherAddtionalData($teacherData);
+
+        if (count($post['teacherCourse']) > 0) {
+            $success = $this->UsersModel->deleteCoursesTeachersByTeachersId($teachersId);
+            if ($success) {
+                foreach ($post['teacherCourse'] as $coursesId) {
+                    $success = $this->UsersModel->addCoursesTeachers($teachersId, $coursesId);
+                }
+            }
+        }
+
+        if ($success) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public function ajaxUpdateTeacherInfo()

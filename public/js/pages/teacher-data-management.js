@@ -24,6 +24,9 @@ $(document).ready(function() {
 	}
 
 	$('.edit-btn').click(function(e) {
+		$("#modal-title").html("编辑教师信息");
+		$("#edit-teacher-info").html("编辑");
+
 		var teacherName = $(this).closest("tr").eq(0).children(0).eq(1).text();
 		var courseLeader = $(this).closest("tr").eq(0).children(0).eq(2).attr("coursesId");
 		var classTeacher = $(this).closest("tr").eq(0).children(0).eq(3).attr("classesId");
@@ -51,18 +54,23 @@ $(document).ready(function() {
 					courseLeader : $('input[name=courseLeader]:checked').val(),
 					classTeacher : $("#class-teacher").val(),
 					teacherCourse : teacherCourse,
+					teacherName : $("#teacher-name").val(),
 					};
+		var url = "/school/ajax-update-teacher-info";
+		if ("添加" == $("#edit-teacher-info").html()) {
+			url = "/school/ajax-add-teacher";
+		}
 		console.log(data);
 		$.ajax({
 				type: 'POST',
 				data: data,
-				url: "/school/ajax-update-teacher-info",
+				url: url,
 				success: function(data) {
 					if ("true" == data) {
 						$('#popup').modal('hide');
 						top.location.href = '/school/teachers-data-management';
 					} else {
-						alert("教师信息修改失败！");
+						alert("操作失败！");
 					}
 					
 				}
@@ -70,11 +78,13 @@ $(document).ready(function() {
 	});
 
 	$('.add-teacher-btn').click(function(e) {
-		$('#popup').modal('show');
-		$("#teachers-id").val();
-		$("#teacher-name").val();
+		$("#modal-title").html("添加教师用户");
+		$("#teachers-id").val("");
+		$("#teacher-name").val("");
 		$("input:radio[name='courseLeader']").prop("checked", false);
-		$("#class-teacher").val();
+		$("#class-teacher").val("");
+		$("#edit-teacher-info").html("添加");
 		$("input:checkbox[name='teacherCourse']").prop("checked", false);
+		$('#popup').modal('show');
 	});
 });
