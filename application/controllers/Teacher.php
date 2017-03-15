@@ -487,13 +487,14 @@ class Teacher extends Generic
     {
         $class = $this->UsersModel->getOneClasses($classesId);
         $selectedStudentsData = $this->UsersModel->getClassStudentsByClassesId($classesId, false, $orderBy);
-
+        $studentCount = count($selectedStudentsData);
         $maxNumPerLine = 6;
         if ("name" == $orderBy) {
             $selectedStudentsData = $this->changeStudentDateToVerticalOrder($selectedStudentsData, $maxNumPerLine);
         }
         $num = 1;
-        $studentsHtml = "<div class='row'><div class='col-md-2 col-xs-2'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div><div class='col-md-2 col-xs-2'><h4>".$class['name']."班</h4></div>" . 
+
+        $studentsHtml = "<div class='row'><div class='col-md-2 col-xs-2'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div><div class='col-md-2 col-xs-2'><h4>".$class['name']."班 (".$studentCount."人)</h4></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-name'>按姓名排序</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-number'>按学号排序</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='select-all'>全选名单</a></div>" . 
