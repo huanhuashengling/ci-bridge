@@ -191,29 +191,6 @@ class School extends Generic
 
     }
 
-    public function ajaxAddTeacherInfo()
-    {
-        $post = $this->input->post();
-        $teacherCourse = $post['teacherCourse'];
-
-        $success = $this->UsersModel->updateTeachersInfo($post['teachersId'], $post['courseLeader'], $post['classTeacher']);
-        if (count($post['teacherCourse']) > 0) {
-            $success = $this->UsersModel->deleteCoursesTeachersByTeachersId($post['teachersId']);
-            if ($success) {
-                foreach ($post['teacherCourse'] as $coursesId) {
-                    $success = $this->UsersModel->addCoursesTeachers($post['teachersId'], $coursesId);
-                }
-            }
-        }
-        
-        if ($success) {
-            echo "true";
-        } else {
-            echo "false";
-        }
-
-    }
-
     public function ajaxAddTeacher()
     {
         $post = $this->input->post();
@@ -241,9 +218,9 @@ class School extends Generic
         }
 
         if ($success) {
-            return true;
+            echo "true";
         } else {
-            return false;
+            echo "false";
         }
     }
 

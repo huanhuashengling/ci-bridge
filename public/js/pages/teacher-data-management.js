@@ -60,7 +60,7 @@ $(document).ready(function() {
 		if ("添加" == $("#edit-teacher-info").html()) {
 			url = "/school/ajax-add-teacher";
 		}
-		console.log(data);
+		// console.log(data);
 		$.ajax({
 				type: 'POST',
 				data: data,
