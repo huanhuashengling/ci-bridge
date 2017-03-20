@@ -20,6 +20,7 @@
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li class="<?php echo ($activeLink == 'classroom-evaluation') ? 'active' : ''; ?>"><a href="/teacher/classroom-evaluation">课堂评价</a></li>
+            <li class="<?php echo ($activeLink == 'evaluation-report') ? 'active' : ''; ?>"><a href="/teacher/evaluation-report">评价报告</a></li>
             <li class="<?php echo ($activeLink == 'evaluation-history') ? 'active' : ''; ?>"><a href="/teacher/evaluation-history">评价历史</a></li>
             <?php if ($courseLeader) :?>
             <li class="<?php echo ($activeLink == 'course-evaluation-management') ? 'active' : ''; ?>"><a href="/teacher/course-evaluation-management">学科评价设计</a></li>

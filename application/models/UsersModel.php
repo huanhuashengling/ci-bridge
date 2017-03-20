@@ -490,6 +490,37 @@ Class UsersModel extends CI_Model
         return false;
     }
 
+    public function getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect)
+    {
+        $classMatch = (!isset($classSelect) || (0 == $classSelect))?"":" AND cl.id = " . $classSelect;
+        $courseMatch = (!isset($courseSelect) || (0 == $courseSelect))?"":" AND c.id = " . $courseSelect;
+        $weekNumMatch = (!isset($weekNum) || (0 == $weekNum))?"":" AND weekofyear(e.evaluate_date) = ".$weekNum;
+        $sql = "SELECT u.username, count(*) as count
+                FROM evaluation as e 
+                LEFT JOIN users as u ON u.id = e.students_users_id 
+                LEFT JOIN students as st ON st.users_id = e.students_users_id 
+                LEFT JOIN classes as cl ON cl.id = st.classes_id 
+                LEFT JOIN courses as c ON c.id = e.courses_id 
+                LEFT JOIN scores as s ON s.id = e.scores_id 
+                WHERE 1
+                AND teachers_users_id = ?
+                AND 2017 = YEAR(e.evaluate_date)
+                $classMatch
+                $courseMatch
+                $weekNumMatch
+                GROUP BY u.username order by count desc";
+            // echo "</br>" . $usersId." ////// ".$sql."---------------------";//die();
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $usersId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
     public function deleteEvaluateItem($evaluationId)
     {
         $sql = "DELETE FROM evaluation WHERE id=?";

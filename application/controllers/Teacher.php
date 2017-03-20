@@ -388,6 +388,60 @@ class Teacher extends Generic
         $this->_render($obj);
     }
 
+    public function evaluationReport()
+    {
+        $weekData = ["所有周次", "第一周", "第二周", "第三周", "第四周", "第五周", "第六周", "第七周", "第八周", "第九周", "第十周", "第十一周", "第十二周", "第十三周", "第十四周", "第十五周", "第十六周", "第十七周", "第十八周", "第十九周", "第二十周"];
+        $weekSelect = $this->session->userdata("evaluationReportWeekSelect");
+        $classSelect = $this->session->userdata("evaluationReportClassSelect");
+        $courseSelect = $this->session->userdata("evaluationReportCourseSelect");
+        $startWeeNum = 6;
+
+        if (!isset($weekSelect)) {
+            $weekNum = date('W', time());
+            $weekSelect = $weekNum - $startWeeNum;
+        } else {
+            $weekNum = (0 == $weekSelect)?null:($weekSelect + $startWeeNum);
+        }
+
+        $usersId = $this->session->userdata("user_id");
+        $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
+
+        $evaluationData = $this->UsersModel->getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect);
+
+        $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
+        if (0 == count($courses)) {
+            $courses = $this->UsersModel->getCourses();
+        }
+        $classes = $this->UsersModel->getClasses();
+
+        $params = $this->_getParams();
+        $params['courseLeader'] = $user['course_leader'];
+        $params['classTeacher'] = $user['class_teacher'];
+        // $params['manager'] = $user['manager'];
+        $obj = [
+            'body' => $this->load->view('teacher/evaluation_report', 
+                                    ['evaluationData' => $evaluationData, 
+                                    "courses" => $courses, 
+                                    'classes' => $classes,
+                                    'weekSelect' => $weekSelect,
+                                    'courseSelect' => $courseSelect,
+                                    'classSelect' => $classSelect,
+                                    'weekData' => $weekData], true),
+            'csses' => [],
+            'jses' => ['/js/pages/evaluation-report.js'],
+            'header' => $this->load->view('teacher/header', $params, true),
+        ];
+        $this->_render($obj);
+    }
+
+    public function ajaxFilterEvaluationReport()
+    {
+        $post = $this->input->post();
+        $this->session->set_userdata("evaluationReportWeekSelect", $post['weekSelect']);
+        $this->session->set_userdata("evaluationReportClassSelect", $post['classSelect']);
+        $this->session->set_userdata("evaluationReportCourseSelect", $post['courseSelect']);
+    }
+
     public function ajaxFilterEvaluationHistory()
     {
         $post = $this->input->post();
