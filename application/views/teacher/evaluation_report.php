@@ -4,6 +4,7 @@
         <div class="col-sm-2">
             <button class="btn btn-primary <?=$active?>" type="button" id="today-btn"><?=("active" == $active)?"退出":""?>查询今天</button>
         </div>
+        <?php if ("" == $active):?>
         <div class="col-sm-2">
             <select id="week-select" class="form-control">
                 <?php foreach ($weekData as $key => $week): ?>
@@ -12,6 +13,7 @@
                 <?php endforeach ?>
             </select>
         </div>
+        <?php endif;?>
         <div class="col-sm-2">
             <select id="class-select" class="form-control">
                 <option value="0">所有班级</option>
@@ -30,7 +32,7 @@
                 <?php endforeach ?>
             </select>
         </div>
-        <h4>选择后查询结果</h4>
+        <h4>选择后自动显示结果</h4>
     </div>
     <div class="content">
     <table class='table table-hover table-condensed'>
