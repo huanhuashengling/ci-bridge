@@ -490,11 +490,15 @@ Class UsersModel extends CI_Model
         return false;
     }
 
-    public function getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect)
+    public function getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect, $todaySelect)
     {
         $classMatch = (!isset($classSelect) || (0 == $classSelect))?"":" AND cl.id = " . $classSelect;
         $courseMatch = (!isset($courseSelect) || (0 == $courseSelect))?"":" AND c.id = " . $courseSelect;
-        $weekNumMatch = (!isset($weekNum) || (0 == $weekNum))?"":" AND weekofyear(e.evaluate_date) = ".$weekNum;
+        if ("true" == $todaySelect) {
+            $weekNumMatch = " AND to_days(e.evaluate_date) = to_days(now())";
+        } else {
+            $weekNumMatch = (!isset($weekNum) || (0 == $weekNum))?"":" AND weekofyear(e.evaluate_date) = ".$weekNum;
+        }
         $sql = "SELECT u.username, count(*) as count
                 FROM evaluation as e 
                 LEFT JOIN users as u ON u.id = e.students_users_id 

@@ -1,5 +1,9 @@
+<?php $active = ("true"==$todaySelect)?"active":"";?>
 <div class="container">
     <div class="form-group">
+        <div class="col-sm-2">
+            <button class="btn btn-primary <?=$active?>" type="button" id="today-btn"><?=("active" == $active)?"退出":""?>查询今天</button>
+        </div>
         <div class="col-sm-2">
             <select id="week-select" class="form-control">
                 <?php foreach ($weekData as $key => $week): ?>

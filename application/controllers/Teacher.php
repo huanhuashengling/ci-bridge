@@ -391,6 +391,7 @@ class Teacher extends Generic
     public function evaluationReport()
     {
         $weekData = ["所有周次", "第一周", "第二周", "第三周", "第四周", "第五周", "第六周", "第七周", "第八周", "第九周", "第十周", "第十一周", "第十二周", "第十三周", "第十四周", "第十五周", "第十六周", "第十七周", "第十八周", "第十九周", "第二十周"];
+        $todaySelect = $this->session->userdata("evaluationReportTodaySelect");
         $weekSelect = $this->session->userdata("evaluationReportWeekSelect");
         $classSelect = $this->session->userdata("evaluationReportClassSelect");
         $courseSelect = $this->session->userdata("evaluationReportCourseSelect");
@@ -406,7 +407,7 @@ class Teacher extends Generic
         $usersId = $this->session->userdata("user_id");
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
-        $evaluationData = $this->UsersModel->getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect);
+        $evaluationData = $this->UsersModel->getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect, $todaySelect);
 
         $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
         if (0 == count($courses)) {
@@ -423,6 +424,7 @@ class Teacher extends Generic
                                     ['evaluationData' => $evaluationData, 
                                     "courses" => $courses, 
                                     'classes' => $classes,
+                                    'todaySelect' => $todaySelect,
                                     'weekSelect' => $weekSelect,
                                     'courseSelect' => $courseSelect,
                                     'classSelect' => $classSelect,
@@ -437,6 +439,7 @@ class Teacher extends Generic
     public function ajaxFilterEvaluationReport()
     {
         $post = $this->input->post();
+        $this->session->set_userdata("evaluationReportTodaySelect", $post['todaySelect']);
         $this->session->set_userdata("evaluationReportWeekSelect", $post['weekSelect']);
         $this->session->set_userdata("evaluationReportClassSelect", $post['classSelect']);
         $this->session->set_userdata("evaluationReportCourseSelect", $post['courseSelect']);

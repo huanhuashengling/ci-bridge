@@ -1,4 +1,12 @@
 $(document).ready(function() {
+	$('#today-btn').click(function(e) {
+		if ($('#today-btn').hasClass("active")) {
+			$('#today-btn').removeClass("active");
+		} else {
+			$('#today-btn').addClass("active");
+		}
+        filterEvaluationReport();
+    });
 
     $('#week-select').change(function(e) {
         filterEvaluationReport();
@@ -14,11 +22,13 @@ $(document).ready(function() {
 
     function filterEvaluationReport()
     {
+    	var todaySelect = $('#today-btn').hasClass("active");
     	var weekSelect = $("#week-select").val();
         var courseSelect = $("#course-select").val();
         var classSelect = $("#class-select").val();
 
-    	var data = { weekSelect : weekSelect, 
+    	var data = { todaySelect : todaySelect,
+    				 weekSelect : weekSelect, 
     				 classSelect : classSelect, 
     				 courseSelect : courseSelect}
 		$.ajax({
