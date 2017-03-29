@@ -32,7 +32,7 @@
                 <?php endforeach ?>
             </select>
         </div>
-        <h4>选择后自动显示结果</h4>
+        <h4><span id = "reportCount">合计<?=count($evaluationData)?>人/<?=$evaluateCount?>次</span></h4>
     </div>
     <div class="content">
     <table class='table table-hover table-condensed'>

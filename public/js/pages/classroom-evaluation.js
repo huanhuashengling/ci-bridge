@@ -23,6 +23,7 @@ $(document).ready(function() {
 			$(".student-btn").removeClass('btn-primary');
 			$(".student-btn").removeClass('btn-danger');
 			$(".student-btn").addClass('btn-success');
+			showSelectedCount();
 		})
 		.on('click', '#un-select-all', function() {
 			$(".student-btn").each(function(){
@@ -34,6 +35,7 @@ $(document).ready(function() {
 					$(this).addClass('btn-danger');
 				}
 			})
+			showSelectedCount();
 		})
 		.on('click', '.student-btn', function() {
 			if ("boy" == $(this).attr('gender')) {
@@ -54,6 +56,7 @@ $(document).ready(function() {
 					$(this).addClass('btn-danger');
 				}
 			}
+			showSelectedCount();
 		})
         .on('click', "div[name='course-btn-group'] label", function() {
         	var coursesId =$(this).children().attr('id'); 
@@ -185,5 +188,21 @@ $(document).ready(function() {
 				$(this).addClass('btn-primary');
 			}
 		});
+		showSelectedCount()
+	}
+
+	function showSelectedCount()
+	{
+		var studentsIds = $.map($('.btn-success'), function(element) {
+		  return $(element).val();
+		});
+		var selectesCount = 0;
+		for (var i=0; i < studentsIds.length; i++)
+		{
+			if (0 != studentsIds[i]) {
+				selectesCount++;
+			}
+		}
+		$("#selectedCount").html("/" + selectesCount);
 	}
 });

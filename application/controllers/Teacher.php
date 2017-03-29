@@ -409,6 +409,11 @@ class Teacher extends Generic
 
         $evaluationData = $this->UsersModel->getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect, $todaySelect);
 
+        // count for report info
+        $evaluateCount = 0;
+        foreach ($evaluationData as $key => $item) {
+            $evaluateCount += $item['count'];
+        }
         $courses = $this->UsersModel->getCoursesByTeachersId($usersId);
         if (0 == count($courses)) {
             $courses = $this->UsersModel->getCourses();
@@ -428,6 +433,7 @@ class Teacher extends Generic
                                     'weekSelect' => $weekSelect,
                                     'courseSelect' => $courseSelect,
                                     'classSelect' => $classSelect,
+                                    'evaluateCount' => $evaluateCount,
                                     'weekData' => $weekData], true),
             'csses' => [],
             'jses' => ['/js/pages/evaluation-report.js'],
@@ -551,7 +557,7 @@ class Teacher extends Generic
         }
         $num = 1;
 
-        $studentsHtml = "<div class='row'><div class='col-md-2 col-xs-2'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div><div class='col-md-2 col-xs-2'><h4>".$class['name']."班 (".$studentCount."人)</h4></div>" . 
+        $studentsHtml = "<div class='row'><div class='col-md-2 col-xs-2'><a class='btn btn-default' href='/teacher/classroom-evaluation'><<返回班级选择</a></div><div class='col-md-2 col-xs-2'><h4>".$class['name']."班 (".$studentCount."<span id='selectedCount'>/0</span>)</h4></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-name'>按姓名排序</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='order-by-number'>按学号排序</a></div>" . 
             "<div class='col-md-2 col-xs-2'><a class='btn btn-default' id='select-all'>全选名单</a></div>" . 
