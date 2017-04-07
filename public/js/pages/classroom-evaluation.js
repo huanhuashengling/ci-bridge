@@ -138,7 +138,7 @@ $(document).ready(function() {
 					data: data,
 					url: "/teacher/submit-evaluation",
 					success: function(data) {
-						console.log(data);
+						// console.log(data);
 						if ("true" ==data) {
 							$("#addPop").modal("show");
 							$("#pop-title").html("添加评价成功！");
