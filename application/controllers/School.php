@@ -178,6 +178,25 @@ class School extends Generic
         $this->_render($obj);
     }
 
+    public function classEvaluationCount()
+    {
+        $params = $this->_getParams();
+        $courses = $this->UsersModel->getCourses();
+        $classes = $this->UsersModel->getClasses();
+        $classesData = [];
+        foreach ($classes as $key => $class) {
+            $classesData[$class['grade_number']][] = $class;
+        }
+
+        $obj = [
+            'body' => $this->load->view('school/class_evaluation_count', ["courses" => $courses, "classesData" => $classesData], true),
+            'csses' => [],
+            'jses' => ['/js/pages/class-evaluation-count.js'],
+            'header' => $this->load->view('school/header', $params, true),
+        ];
+        $this->_render($obj);
+    }
+
     public function ajaxResetTeacherPassword()
     {
         $post = $this->input->post();
@@ -281,6 +300,61 @@ class School extends Generic
                 echo $this->load->view('school/partial/teacher_evaluation_list', ['teachersEvaluationData' => $teachersEvaluationData, 'totalCount' => $totalCount], true);
             }
         }
+    }
+
+    public function ajaxGetClassEvaluationCount()
+    {
+        $post = $this->input->post();
+        $selectCourses = [];
+        if (isset($post['coursesId'])) {
+            $coursesId = $post['coursesId'];
+            $selectCourses[] = $this->UsersModel->getOneCourse($coursesId);
+        } else {
+            $coursesId = NULL;
+            $selectCourses = $this->UsersModel->getCourses();
+        }
+        $classEvaluationData = [];
+        $students = $this->UsersModel->getClassStudentsByClassesId($post['classesId']);
+        $totalCount = 0;
+        $totalScore = 0;
+        foreach ($students as $key => $student) {
+            $studentEvaluationData = $this->UsersModel->getEvaluateCountByStudentsId($student['users_id'], $coursesId);
+            $classEvaluationitem = ['num' => ($key + 1), 'username' => $student['username']];
+            // var_dump($studentEvaluationData);die();
+            if (count($studentEvaluationData) > 0) {
+                $data = [];
+                foreach ($studentEvaluationData as $key => $studentEvaluationItem) {
+                    $data[$studentEvaluationItem['courses_id']] = $studentEvaluationItem;
+                }
+                $studentEvaluationData = $data;
+                // var_dump($studentEvaluationData);die();
+                foreach ($selectCourses as $key => $course) {
+                    if (isset($studentEvaluationData[$course['id']])) {
+                        $item = $studentEvaluationData[$course['id']];
+
+                        $totalCount += $item['evaluate_count'];
+                        $totalScore += $item['score'];
+
+                        $classEvaluationitem[$course['name']] = $item['evaluate_count'];
+                        // $classEvaluationitem[$course['name']] = $item['score'];
+                    } else {
+                        $classEvaluationitem[$course['name']] = 0;
+                    }
+                    
+                }
+            } else {
+                foreach ($selectCourses as $key => $course) {
+                    $classEvaluationitem[$course['name']] = 0;
+                }
+            }
+            $classEvaluationData[] = $classEvaluationitem;
+        }
+        // var_dump($classEvaluationData);die();
+        echo $this->load->view('school/partial/class_evaluation_list', [
+            'classEvaluationData' => $classEvaluationData,
+            'selectCourses' => $selectCourses,
+            'totalCount' => $totalCount,
+            'totalScore' => $totalScore], true);
     }
 
     public function exportTeacherEvaluationData($stories)

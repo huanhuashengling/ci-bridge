@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/basic.css">
     <link rel="stylesheet" href="/css/carousel.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-table.css">
     <link rel="stylesheet" href="/css/jquery-ui.css">
     <!-- <link rel="stylesheet" href="/css/flatit.css"> -->
     
@@ -27,6 +28,8 @@
     <script src="/js/jquery.cookie.js"></script>
     <script src="/js/jquery.validate.min.js"></script>
     <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/bootstrap-table.js"></script>
+    <script src="/js/locale/bootstrap-table-zh-CN.js"></script>
     <script src="/js/basic.js"></script>
     
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
