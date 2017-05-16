@@ -17,8 +17,12 @@ class School extends Generic
     
     public function _checkLogin()
     {
+        // echo $_SERVER['REQUEST_URI'];die();
+        
         $usersId = $this->session->userdata("user_id");
-        if (!isset($usersId)) {
+        if ("/school/class-evaluation-count" == $_SERVER['REQUEST_URI']){
+
+        } elseif (!isset($usersId)) {
             redirect('/user/login','refresh');
         }
     }
