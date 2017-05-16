@@ -20,7 +20,8 @@ class School extends Generic
         // echo $_SERVER['REQUEST_URI'];die();
         
         $usersId = $this->session->userdata("user_id");
-        if ("/school/class-evaluation-count" == $_SERVER['REQUEST_URI']){
+        //Just for search the count
+        if ("/school/class-evaluation-count" == $_SERVER['REQUEST_URI'] || "/school/ajax-get-class-evaluation-count" == $_SERVER['REQUEST_URI']){
 
         } elseif (!isset($usersId)) {
             redirect('/user/login','refresh');
