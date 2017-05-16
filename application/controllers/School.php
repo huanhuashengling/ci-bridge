@@ -318,6 +318,7 @@ class School extends Generic
             $coursesId = NULL;
             $selectCourses = $this->UsersModel->getCourses();
         }
+        $class = $this->UsersModel->getOneClasses($post['classesId']);
         $classEvaluationData = [];
         $students = $this->UsersModel->getClassStudentsByClassesId($post['classesId']);
         $totalCount = 0;
@@ -326,6 +327,8 @@ class School extends Generic
             $studentEvaluationData = $this->UsersModel->getEvaluateCountByStudentsId($student['users_id'], $coursesId);
             $classEvaluationitem = ['num' => ($key + 1), 'username' => $student['username']];
             // var_dump($studentEvaluationData);die();
+            $studentCount = 0;
+            $studentScore = 0;
             if (count($studentEvaluationData) > 0) {
                 $data = [];
                 foreach ($studentEvaluationData as $key => $studentEvaluationItem) {
@@ -333,6 +336,7 @@ class School extends Generic
                 }
                 $studentEvaluationData = $data;
                 // var_dump($studentEvaluationData);die();
+                
                 foreach ($selectCourses as $key => $course) {
                     if (isset($studentEvaluationData[$course['id']])) {
                         $item = $studentEvaluationData[$course['id']];
@@ -340,22 +344,30 @@ class School extends Generic
                         $totalCount += $item['evaluate_count'];
                         $totalScore += $item['score'];
 
+                        $studentCount += $item['evaluate_count'];
+                        $studentScore += $item['score'];
+
+                        
+
                         $classEvaluationitem[$course['name']] = $item['evaluate_count'];
                         // $classEvaluationitem[$course['name']] = $item['score'];
+                        
                     } else {
                         $classEvaluationitem[$course['name']] = 0;
                     }
-                    
                 }
+                $classEvaluationitem['合计'] = $studentCount;
             } else {
                 foreach ($selectCourses as $key => $course) {
                     $classEvaluationitem[$course['name']] = 0;
                 }
+                $classEvaluationitem["合计"] = 0;
             }
             $classEvaluationData[] = $classEvaluationitem;
         }
         // var_dump($classEvaluationData);die();
         echo $this->load->view('school/partial/class_evaluation_list', [
+            'className' => $class['name'],
             'classEvaluationData' => $classEvaluationData,
             'selectCourses' => $selectCourses,
             'totalCount' => $totalCount,
