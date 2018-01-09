@@ -13,6 +13,7 @@ class School extends Generic
         $this->load->model('ion_auth_model');
         $this->load->library('Ion_auth');
         $this->load->helper('download');
+        $this->load->library('pinyinfirstchar');
     }
     
     public function _checkLogin()
@@ -325,8 +326,8 @@ class School extends Generic
         $totalScore = 0;
         foreach ($students as $key => $student) {
             $studentEvaluationData = $this->UsersModel->getEvaluateCountByStudentsId($student['users_id'], $coursesId);
-            $classEvaluationitem = ['num' => ($key + 1), 'username' => $student['username']];
-            // var_dump($studentEvaluationData);die();
+            $classEvaluationitem = ['num' => ($key + 1), 'username' => "<small>".$this->pinyinfirstchar->getFirstchar($student['username'])."</small> ".$student['username']];
+            // var_dump($student);die();
             $studentCount = 0;
             $studentScore = 0;
             if (count($studentEvaluationData) > 0) {

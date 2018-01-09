@@ -309,7 +309,7 @@ class Teacher extends Generic
         // }
 
 
-        $startWeeNum = 6;//$schoolTermData[$schoolTermSelect]['startWeeNum'];
+        $startWeeNum = 0;//$schoolTermData[$schoolTermSelect]['startWeeNum'];
 
         if (!isset($weekSelect)) {
             $weekNum = date('W', time());
@@ -395,7 +395,7 @@ class Teacher extends Generic
         $weekSelect = $this->session->userdata("evaluationReportWeekSelect");
         $classSelect = $this->session->userdata("evaluationReportClassSelect");
         $courseSelect = $this->session->userdata("evaluationReportCourseSelect");
-        $startWeeNum = 6;
+        $startWeeNum = 0;
 
         if (!isset($weekSelect)) {
             $weekNum = date('W', time());
@@ -408,7 +408,7 @@ class Teacher extends Generic
         $user = $this->UsersModel->getTeachersInfoByUsersId($usersId);
 
         $evaluationData = $this->UsersModel->getEvaluationCount($usersId, $weekNum, $classSelect, $courseSelect, $todaySelect);
-
+// var_dump($evaluationData);die();
         // count for report info
         $evaluateCount = 0;
         foreach ($evaluationData as $key => $item) {

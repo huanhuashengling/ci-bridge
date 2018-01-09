@@ -222,7 +222,7 @@ Class UsersModel extends CI_Model
         }
         $order = "";
         if (isset($orderBy) && ("name" == $orderBy)) {
-            $order = "ORDER BY CONVERT( username USING gbk )";
+            // $order = "ORDER BY CONVERT( username USING gbk )";
         }
 
         $sql = "SELECT u.*, s.* FROM users as u 
@@ -342,7 +342,7 @@ Class UsersModel extends CI_Model
         if (isset($coursesId)) {
             $courseMatch = "AND c.id = " . $coursesId;
         }
-        $sql = "SELECT c.name as course_name, c.id as courses_id, count(*) as evaluate_count, sum(s.score) as score 
+        $sql = "SELECT c.name as course_name, c.star_name as star_name, c.id as courses_id, count(*) as evaluate_count, sum(s.score) as score 
                 FROM evaluation as e 
                 LEFT JOIN courses as c ON c.id = e.courses_id 
                 LEFT JOIN scores as s ON s.id = e.scores_id 
@@ -351,6 +351,26 @@ Class UsersModel extends CI_Model
                 GROUP BY courses_id";
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $studentsId, PDO::PARAM_INT);
+        $success = $stmt->execute();
+
+        if ($success) {
+            return $stmt->fetchAll();
+        }
+        
+        return false;
+    }
+
+    public function getEvaluateDetailByStudentsId($studentsId, $coursesId)
+    {
+        $sql = "SELECT * 
+                FROM evaluation as e 
+                LEFT JOIN courses as c ON c.id = e.courses_id 
+                LEFT JOIN scores as s ON s.id = e.scores_id 
+                WHERE students_users_id = ? 
+                AND c.id = ?";
+        $stmt = $this->db->conn_id->prepare($sql);
+        $stmt->bindParam(1, $studentsId, PDO::PARAM_INT);
+        $stmt->bindParam(2, $coursesId, PDO::PARAM_INT);
         $success = $stmt->execute();
 
         if ($success) {
@@ -471,13 +491,13 @@ Class UsersModel extends CI_Model
                 LEFT JOIN evaluation_details as ed ON ed.id = e.evaluation_details_id 
                 WHERE 1
                 AND teachers_users_id = ?
-                AND 2017 = YEAR(e.evaluate_date)
                 $classMatch
                 $courseMatch
                 $weekNumMatch
                 $studentNameMatch
                 ORDER BY e.id DESC
                 $limitMatch";
+                //AND 2017 = YEAR(e.evaluate_date)
             // echo $sql."---------------------";//die();
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $usersId, PDO::PARAM_INT);
@@ -508,11 +528,12 @@ Class UsersModel extends CI_Model
                 LEFT JOIN scores as s ON s.id = e.scores_id 
                 WHERE 1
                 AND teachers_users_id = ?
-                AND 2017 = YEAR(e.evaluate_date)
                 $classMatch
                 $courseMatch
                 $weekNumMatch
                 GROUP BY u.username order by count desc";
+                //AND 2018 = YEAR(e.evaluate_date)
+                
             // echo "</br>" . $usersId." ////// ".$sql."---------------------";//die();
         $stmt = $this->db->conn_id->prepare($sql);
         $stmt->bindParam(1, $usersId, PDO::PARAM_INT);

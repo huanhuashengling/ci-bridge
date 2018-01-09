@@ -27,6 +27,7 @@
             <?php endif;?>
             <?php if ($classTeacher) :?>
                 <li class="<?php echo ($activeLink == 'class-student-info') ? 'active' : ''; ?>"><a href="/teacher/class-student-info">班级学生信息</a></li>
+                <li class="<?php echo ($activeLink == 'class-evaluation-count') ? 'active' : ''; ?>"><a href="/teacher/class-evaluation-count">本班评价统计</a></li>
                 <!-- <li class="<?php echo ($activeLink == 'class-evaluation-report') ? 'active' : ''; ?>"><a href="/teacher/class-evaluation-report">班级评价报告</a></li> -->
             <?php endif;?>
             <?php //if ($manager) :?>

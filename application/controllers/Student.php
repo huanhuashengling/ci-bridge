@@ -38,14 +38,17 @@ class Student extends Generic {
 
         $usersId = $this->session->userdata("user_id");
         $courses = $this->UsersModel->getCourses();
-        // var_dump($courses);
+
         $evaluateCountHtml = [];
         foreach ($courses as $key => $course) {
+
             $evaluateCount = $this->UsersModel->getEvaluateCountByStudentsId($usersId, $course['id']);
             if (0 == count($evaluateCount)) {
+
                 $evaluateItem = [
                     'course_name' => $course['name'],
                     'courses_id' => $course['id'],
+                    'star_name' => $course['star_name'],
                     'evaluate_count' => 0,
                     'score' => 0,
                 ];
@@ -66,9 +69,81 @@ class Student extends Generic {
 
     public function getCourseCountItemHtml($evaluateItem)
     {
-        $courseCountItemHtml = "<div class='col-md-4 col-sm-4'><table class='table table-bordered table-hover table-condensed' value=1><tr><td colspan=2>". $evaluateItem['course_name'] . "</td></tr><tr ><td width='50%'>评价次数</td><td>". $evaluateItem['evaluate_count'] . "</td></tr><tr><td>分数合计</td><td>". $evaluateItem['score'] . "</td></tr></table></div>";
+        $starName = ("" != $evaluateItem['star_name'])?"(" . $evaluateItem['star_name'] . ")":"";
+        $courseCountItemHtml = "<div class='col-md-4 col-sm-4'><table class='table table-bordered table-hover table-condensed' value='" . $evaluateItem["courses_id"]. "'><tr><td colspan=2 class='text-center'><h4>". $evaluateItem['course_name'] . "<small> ". $starName ."</small></h4></td></tr><tr ><td width='50%'><h5>评价次数</h5></td><td><h5>". $evaluateItem['evaluate_count'] . "</h5></td></tr><tr><td><h5>得分</h5></td><td><h5>". $evaluateItem['score'] . "</h5></td></tr></table></div>";
 
         return $courseCountItemHtml;
     }
 
+    public function evaluateDetail()
+    {
+        $coursesId = $this->uri->segment(3);
+        $usersId = $this->session->userdata("user_id");
+        $params = $this->_getParams();
+        $evaluateDetail = $this->UsersModel->getEvaluateDetailByStudentsId($usersId, $coursesId);
+        foreach ($evaluateDetail as $key => $evaluateItem) {
+            // var_dump($evaluateItem);
+            // echo "------------";
+        }
+        // die();
+        // $params['courseLeader'] = $user['course_leader'];
+        // $params['classTeacher'] = $user['class_teacher'];
+        // $params['manager'] = $user['manager'];
+        $obj = [
+            'body' => $this->load->view('teacher/evaluation_history', 
+                                    ['evaluationData' => $evaluationData, 
+                                    // 'schoolTermData' => $schoolTermData, 
+                                    // 'schoolTermSelect' => $schoolTermSelect,
+                                    "data" => $data, 
+                                    'startOrder' => $startOrder,
+                                    "courses" => $courses, 
+                                    'classes' => $classes,
+                                    'weekSelect' => $weekSelect,
+                                    'courseSelect' => $courseSelect,
+                                    'classSelect' => $classSelect,
+                                    'studentNameSelect' => $studentNameSelect,
+                                    'weekData' => $weekData,
+                                    'total_row' => $total_row], true),
+            'csses' => [],
+            'jses' => ['/js/pages/evaluate-detail.js'],
+            'header' => $this->load->view('teacher/header', $params, true),
+        ];
+        $this->_render($obj);
+    }
+
+    public function getEvaluateDetailData()
+    {
+        $coursesId = $this->uri->segment(3);
+        $usersId = $this->session->userdata("user_id");
+        $params = $this->_getParams();
+        $evaluateDetail = $this->UsersModel->getEvaluateDetailByStudentsId($usersId, $coursesId);
+        foreach ($evaluateDetail as $key => $evaluateItem) {
+            var_dump($evaluateItem);
+            echo "------------";
+        }
+        die();
+        // $params['courseLeader'] = $user['course_leader'];
+        // $params['classTeacher'] = $user['class_teacher'];
+        // $params['manager'] = $user['manager'];
+        $obj = [
+            'body' => $this->load->view('teacher/evaluation_history', 
+                                    ['evaluationData' => $evaluationData, 
+                                    // 'schoolTermData' => $schoolTermData, 
+                                    // 'schoolTermSelect' => $schoolTermSelect,
+                                    "data" => $data, 
+                                    'startOrder' => $startOrder,
+                                    "courses" => $courses, 
+                                    'classes' => $classes,
+                                    'weekSelect' => $weekSelect,
+                                    'courseSelect' => $courseSelect,
+                                    'classSelect' => $classSelect,
+                                    'studentNameSelect' => $studentNameSelect,
+                                    'weekData' => $weekData,
+                                    'total_row' => $total_row], true),
+            'csses' => [],
+            'jses' => ['/js/pages/evaluate-detail.js'],
+            'header' => $this->load->view('teacher/header', $params, true),
+        ];
+        $this->_render($obj);
+    }
 }
