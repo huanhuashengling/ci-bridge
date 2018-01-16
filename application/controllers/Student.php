@@ -80,70 +80,28 @@ class Student extends Generic {
         $coursesId = $this->uri->segment(3);
         $usersId = $this->session->userdata("user_id");
         $params = $this->_getParams();
-        $evaluateDetail = $this->UsersModel->getEvaluateDetailByStudentsId($usersId, $coursesId);
-        foreach ($evaluateDetail as $key => $evaluateItem) {
-            // var_dump($evaluateItem);
-            // echo "------------";
-        }
-        // die();
-        // $params['courseLeader'] = $user['course_leader'];
-        // $params['classTeacher'] = $user['class_teacher'];
-        // $params['manager'] = $user['manager'];
+        $course = $this->UsersModel->getOneCourse($coursesId);
         $obj = [
-            'body' => $this->load->view('teacher/evaluation_history', 
-                                    ['evaluationData' => $evaluationData, 
-                                    // 'schoolTermData' => $schoolTermData, 
-                                    // 'schoolTermSelect' => $schoolTermSelect,
-                                    "data" => $data, 
-                                    'startOrder' => $startOrder,
-                                    "courses" => $courses, 
-                                    'classes' => $classes,
-                                    'weekSelect' => $weekSelect,
-                                    'courseSelect' => $courseSelect,
-                                    'classSelect' => $classSelect,
-                                    'studentNameSelect' => $studentNameSelect,
-                                    'weekData' => $weekData,
-                                    'total_row' => $total_row], true),
-            'csses' => [],
-            'jses' => ['/js/pages/evaluate-detail.js'],
-            'header' => $this->load->view('teacher/header', $params, true),
+            'body' => $this->load->view('student/evaluate_detail', 
+                                    ['coursesId' => $coursesId,
+                                    'usersId' => $usersId,
+                                    'coursesName' => $course["name"],
+                                    ], true),
+            'csses' => ['/css/bootstrap-table.css'],
+            'jses' => ['/js/pages/evaluate-detail.js',
+                        '/js/bootstrap-table.js',
+                        '/js/locale/bootstrap-table-zh-CN.js'],
+            'header' => $this->load->view('student/header', $params, true),
         ];
         $this->_render($obj);
     }
 
-    public function getEvaluateDetailData()
+    public function getStudentEvaluateDetail()
     {
-        $coursesId = $this->uri->segment(3);
-        $usersId = $this->session->userdata("user_id");
-        $params = $this->_getParams();
-        $evaluateDetail = $this->UsersModel->getEvaluateDetailByStudentsId($usersId, $coursesId);
-        foreach ($evaluateDetail as $key => $evaluateItem) {
-            var_dump($evaluateItem);
-            echo "------------";
-        }
-        die();
-        // $params['courseLeader'] = $user['course_leader'];
-        // $params['classTeacher'] = $user['class_teacher'];
-        // $params['manager'] = $user['manager'];
-        $obj = [
-            'body' => $this->load->view('teacher/evaluation_history', 
-                                    ['evaluationData' => $evaluationData, 
-                                    // 'schoolTermData' => $schoolTermData, 
-                                    // 'schoolTermSelect' => $schoolTermSelect,
-                                    "data" => $data, 
-                                    'startOrder' => $startOrder,
-                                    "courses" => $courses, 
-                                    'classes' => $classes,
-                                    'weekSelect' => $weekSelect,
-                                    'courseSelect' => $courseSelect,
-                                    'classSelect' => $classSelect,
-                                    'studentNameSelect' => $studentNameSelect,
-                                    'weekData' => $weekData,
-                                    'total_row' => $total_row], true),
-            'csses' => [],
-            'jses' => ['/js/pages/evaluate-detail.js'],
-            'header' => $this->load->view('teacher/header', $params, true),
-        ];
-        $this->_render($obj);
+        $post = $this->input->post();
+        
+        $evaluateDetail = $this->UsersModel->getEvaluateDetailByStudentsId($post["usersId"], $post["coursesId"]);
+
+        echo json_encode($evaluateDetail);
     }
 }

@@ -362,10 +362,13 @@ Class UsersModel extends CI_Model
 
     public function getEvaluateDetailByStudentsId($studentsId, $coursesId)
     {
-        $sql = "SELECT * 
+        $sql = "SELECT u.username as teacher_name, c.name as courses_name, ei.description as eidesc, ed.description as eddesc, s.score, s.name as level_name, e.evaluate_date 
                 FROM evaluation as e 
+                LEFT JOIN users as u ON u.id = e.teachers_users_id 
                 LEFT JOIN courses as c ON c.id = e.courses_id 
                 LEFT JOIN scores as s ON s.id = e.scores_id 
+                LEFT JOIN evaluation_indexs as ei ON ei.id = e.evaluation_indexs_id 
+                LEFT JOIN evaluation_details as ed ON ed.id = e.evaluation_details_id 
                 WHERE students_users_id = ? 
                 AND c.id = ?";
         $stmt = $this->db->conn_id->prepare($sql);

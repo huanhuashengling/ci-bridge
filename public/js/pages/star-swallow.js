@@ -8,7 +8,7 @@ $(document).ready(function() {
 	});
 	$(".table").click(function(e){
 		// alert($(this).attr("value"));
-		// window.open("evaluate-detail/" + $(this).attr("value")); 
+		window.open("evaluate-detail/" + $(this).attr("value")); 
 	});
 /*	
 	$(".table tr:nth-child(1)").click(function(e){
